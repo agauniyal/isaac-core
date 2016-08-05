@@ -1,6 +1,6 @@
 #include "app.hpp"
 
 int main() {
-	return doSomething();
+	return doSomething ? 0 : -1;
 }
 
