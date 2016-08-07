@@ -5,4 +5,3 @@ TEST(basic_test, returnsTrue)
 {
 	ASSERT_EQ(doSomething(), true);
 }
-

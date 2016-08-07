@@ -5,4 +5,3 @@
 bool doSomething();
 
 #endif
-

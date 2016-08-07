@@ -3,4 +3,3 @@
 int main() {
 	return doSomething ? 0 : -1;
 }
-

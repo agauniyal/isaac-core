@@ -20,4 +20,3 @@ endif
 
 subdir('src')
 subdir('test')
-

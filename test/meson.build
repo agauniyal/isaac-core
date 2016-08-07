@@ -3,4 +3,3 @@ testexe = executable('testexe', 'test.cpp',
             dependencies : [gtest, thread_dep])
 
 test('app test', testexe)
-
