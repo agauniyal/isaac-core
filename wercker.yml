@@ -71,7 +71,7 @@ build-gcc-default:
         name: run project
         code: |
           cd build
-          timeout 5 ./app/isaac-app
+          timeout 5 ./app/isaac-app || true
 
 
 build-gcc-5:
@@ -151,7 +151,7 @@ build-gcc-5:
         name: run project
         code: |
           cd build
-          timeout 5 ./app/isaac-app
+          timeout 5 ./app/isaac-app || true
 
 
 build-gcc-6:
@@ -233,7 +233,7 @@ build-gcc-6:
         name: run project
         code: |
           cd build
-          timeout 5 ./app/isaac-app
+          timeout 5 ./app/isaac-app || true
 
     - script:
         name: upload coverage to coveralls
@@ -307,4 +307,4 @@ build-clang-default:
         name: run project
         code: |
           cd build
-          timeout 5 ./app/isaac-app
+          timeout 5 ./app/isaac-app || true
