@@ -61,7 +61,7 @@ build-gcc-default:
         name: run project
         code: |
           cd build
-          ./src/isaac-core
+          ./app/isaac-app
 
 
 build-gcc-5:
@@ -131,7 +131,7 @@ build-gcc-5:
         name: run project
         code: |
           cd build
-          ./src/isaac-core
+          ./app/isaac-app
 
 
 build-gcc-6:
@@ -207,7 +207,7 @@ build-gcc-6:
         name: run project
         code: |
           cd build
-          ./src/isaac-core
+          ./app/isaac-app
 
     - script:
         name: upload coverage to coveralls
@@ -271,4 +271,4 @@ build-clang-default:
         name: run project
         code: |
           cd build
-          ./src/isaac-core
+          ./app/isaac-app
