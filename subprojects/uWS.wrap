@@ -1,0 +1,4 @@
+[wrap-git]
+directory=uWebSockets
+url=https://github.com/uWebSockets/uWebSockets.git
+revision=head
