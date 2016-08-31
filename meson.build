@@ -4,19 +4,7 @@ project('isaac-core', 'cpp', version : '0.1.0',
 inc = include_directories('include')
 
 thread_dep = dependency('threads')
-
-
-uWS_dep = dependency('uWS', required : false)
-if uWS_dep.found()
-  uWS_inc = []
-  uWS_lib = []
-else
-  uWS_sp = subproject('uWS')
-  uWS_inc = uWS_sp.get_variable('inc')
-  uWS_lib = uWS_sp.get_variable('uWSlib')
-endif
-
-
+uWS_dep = dependency('uWS', fallback : ['uWS', 'uWS_dep'])
 gtest = dependency('gtest', main : true, required : false)
 
 if not gtest.found()
