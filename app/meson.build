@@ -1,3 +1,3 @@
 executable('isaac-app', 'main.cpp',
-		include_directories : [inc, uWS_inc],
-		link_with : [corelib, uWS_lib])
+		include_directories : inc,
+		link_with : corelib, dependencies : uWS_dep)
