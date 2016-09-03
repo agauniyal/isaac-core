@@ -6,10 +6,10 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"targetArchitecture": "x64",
-			"program": "${workspaceRoot}/build/src/isaac-core",
+			"program": "${workspaceRoot}/build/app/isaac-app",
 			"args": [],
-			"stopAtEntry": false,
-			"cwd": "${workspaceRoot}",
+			"stopAtEntry": true,
+			"cwd": "${workspaceRoot}/debug",
 			"environment": [],
 			"externalConsole": true,
 			"linux": {
@@ -29,10 +29,9 @@
 			"targetArchitecture": "x64",
 			"program": "${workspaceRoot}/build/test/testexe",
 			"args": [],
-			"stopAtEntry": false,
-			"cwd": "${workspaceRoot}",
+			"stopAtEntry": true,
+			"cwd": "${workspaceRoot}/debug",
 			"environment": [],
-			"processId": "${command.pickProcess}",
 			"externalConsole": false,
 			"linux": {
 				"MIMode": "gdb"

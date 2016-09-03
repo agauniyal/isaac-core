@@ -4,4 +4,4 @@ set -ex
 
 mkdir -p build
 cd build/
-(meson .. || ninja) || ninja
+(meson --default-library=static .. || ninja) || ninja
