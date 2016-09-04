@@ -1,4 +1,4 @@
 [wrap-git]
 directory=uWebSockets
-url=https://github.com/uWebSockets/uWebSockets.git
+url=https://github.com/agauniyal/uWebSockets.git
 revision=head
