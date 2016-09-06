@@ -1,7 +1,7 @@
 #include "device.hpp"
 #include <chrono>
 
-class Led : private Device {
+class Led final : public Device {
 
 private:
 	std::mutex m_lastAccess;
@@ -9,7 +9,7 @@ private:
 
 public:
 	Led(const unsigned int, const std::string = "");
-	bool on() { return write(true); }
-	bool off();
-	bool isOn() { return getStatus(); }
+	bool isOn() { return pinStatus(); }
+	bool on() override { return write(true); }
+	bool off() override;
 };

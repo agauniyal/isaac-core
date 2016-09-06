@@ -7,13 +7,14 @@ const std::string Device::GPIO_PATH  = gpio::getGPIOBasePath("config.txt");
 bool Device::occupied[gpio::NumPins] = { 0 };
 
 
-Device::Device(const unsigned int _p, const std::string _d)
-    : powerPin(_p), failState(true), exported(false), details(_d)
+Device::Device(const unsigned int _p, const std::string _n)
+    : powerPin(_p), failState(true), exported(false), name(_n)
 {
 	if (powerPin < 0 || powerPin > gpio::NumPins) {
 		// TODO: LOG error here
 	} else {
 		std::lock_guard<std::mutex> lock(m_occupied);
+		// TODO: generate a unique id here and assign to ID var
 		if (!occupied[powerPin]) {
 			// TODO: Log pin successfully occupied
 			occupied[powerPin] = true;
@@ -22,19 +23,6 @@ Device::Device(const unsigned int _p, const std::string _d)
 		} else {
 			// TODO: Log pin already occupied
 		}
-	}
-}
-
-
-Device::~Device()
-{
-	std::lock_guard<std::mutex> lock(m_occupied);
-	if (occupied[powerPin]) {
-		occupied[powerPin] = false;
-		unmount();
-		// TODO: Log pin successfully removed
-	} else {
-		// TODO: Log pin wasn't occupied, something's wrong
 	}
 }
 
@@ -90,10 +78,10 @@ void Device::unmount()
 }
 
 
-bool Device::setDirection(bool dir)
+bool Device::setDirection(bool _dir)
 {
 	// 0 => 'in' | 1 => 'out'
-	const std::string direction = dir ? "out" : "in";
+	const std::string direction = _dir ? "out" : "in";
 
 	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/direction";
 
@@ -114,13 +102,13 @@ bool Device::getDirection()
 {
 	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/direction";
 
-	bool direction = true;  // "out"
+	bool direction = 1;  // "out"
 	std::string input(3, ' ');
 	std::ifstream dirStream(path.c_str());
 	if (dirStream) {
 		dirStream >> input;
 		if (input == "in") {
-			direction = false;
+			direction = 0;
 		}
 	} else {
 		failState = true;
@@ -129,17 +117,15 @@ bool Device::getDirection()
 }
 
 
-bool Device::write(const bool val)
+bool Device::write(const bool _val)
 {
 	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/value";
 
 	std::ofstream writeStream(path.c_str(), std::ofstream::trunc);
 	setDirection(true);
 	if (writeStream && exported && !failState) {
-		writeStream << val;
-		m_value.lock();
-		pinValue = val;
-		m_value.unlock();
+		writeStream << _val;
+		pinValue = _val;
 		return true;
 	} else {
 		failState = true;
@@ -156,12 +142,37 @@ bool Device::read()
 	std::ifstream readStream(path.c_str());
 	setDirection(false);
 	if (readStream && exported && !failState) {
-		m_value.lock();
-		readStream >> pinValue;
-		m_value.unlock();
+		bool result = false;
+		readStream >> result;
+		pinValue = result;
 	} else {
 		failState = true;
 		// TODO: LOG here
 	}
 	return pinValue;
+}
+
+
+void Device::setName(const std::string _n)
+{
+	std::lock_guard<std::mutex> lock(m_meta);
+	name = _n.substr(0, 20);
+}
+void Device::setInfo(const std::string _o)
+{
+	std::lock_guard<std::mutex> lock(m_meta);
+	info = _o;
+}
+
+
+Device::~Device()
+{
+	std::lock_guard<std::mutex> lock(m_occupied);
+	if (occupied[powerPin]) {
+		occupied[powerPin] = false;
+		unmount();
+		// TODO: Log pin successfully removed
+	} else {
+		// TODO: Log pin wasn't occupied, something's wrong
+	}
 }
