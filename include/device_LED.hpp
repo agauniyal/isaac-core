@@ -1,3 +1,6 @@
+#ifndef DEVICE_LED_HPP
+#define DEVICE_LED_HPP
+
 #include "device_driver.hpp"
 #include <chrono>
 
@@ -13,3 +16,5 @@ public:
 	bool on() override { return write(true); }
 	bool off() override;
 };
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef DEVICE_LIST_HPP
+#define DEVICE_LIST_HPP
+
 #include "device.hpp"
 #include <unordered_map>
 
@@ -16,3 +19,5 @@ arrNameID getBad(const umap);
 arrNameID getMounted(const umap);
 arrNameID getUnmounted(const umap);
 }
+
+#endif

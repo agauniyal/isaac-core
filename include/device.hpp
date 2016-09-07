@@ -1,3 +1,6 @@
+#ifndef DEVICE_HPP
+#define DEVICE_HPP
+
 #include "utils.hpp"
 #include <atomic>
 #include <mutex>
@@ -52,3 +55,5 @@ public:
 
 	~Device();
 };
+
+#endif

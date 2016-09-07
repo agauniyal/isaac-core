@@ -1,3 +1,6 @@
+#ifndef DEVICE_DRIVER_HPP
+#define DEVICE_DRIVER_HPP
+
 #include "device.hpp"
 
 class Device_driver : private Device {
@@ -26,3 +29,5 @@ public:
 
 	virtual ~Device_driver();
 };
+
+#endif
