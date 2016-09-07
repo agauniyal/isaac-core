@@ -1,7 +1,7 @@
-#include "device.hpp"
+#include "device_driver.hpp"
 #include <chrono>
 
-class Led final : public Device {
+class Led final : public Device_driver {
 
 private:
 	std::mutex m_lastAccess;
