@@ -1,3 +1,6 @@
+#ifndef DEVICE_HPP
+#define DEVICE_HPP
+
 #include "utils.hpp"
 #include <atomic>
 #include <mutex>
@@ -20,10 +23,6 @@ class Device {
 	static bool occupied[gpio::NumPins];
 	std::mutex m_occupied;
 
-	// 0 => 'in' | 1 => 'out'
-	bool setDirection(bool);
-	bool getDirection();
-
 	std::string name;
 	std::string info;
 	std::mutex m_meta;
@@ -32,6 +31,7 @@ class Device {
 	Device &operator=(const Device &) = delete;
 
 public:
+	// Pin number and Device name
 	Device(const unsigned int, const std::string = "");
 
 	bool write(bool);
@@ -41,6 +41,10 @@ public:
 	bool hasFailed() const { return failState; }
 	bool pinStatus() const { return pinValue; }
 
+	// 0 => 'in' | 1 => 'out'
+	bool setDirection(bool);
+	bool getDirection();
+
 	void mount();
 	void unmount();
 
@@ -49,11 +53,7 @@ public:
 	std::string getName() const { return name; }
 	std::string getInfo() const { return info; }
 
-	virtual bool on() { return write(1); }
-	virtual bool off() { return write(0); }
-
-	virtual bool execute() { return true; }
-	virtual void process() {}
-
-	virtual ~Device();
+	~Device();
 };
+
+#endif
