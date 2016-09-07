@@ -13,6 +13,8 @@ private:
 public:
 	Led(const unsigned int, const std::string = "");
 	bool isOn() { return pinStatus(); }
+	bool execute() override { return true; }
+	void process() override {}
 	bool on() override { return write(true); }
 	bool off() override;
 };

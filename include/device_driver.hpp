@@ -27,7 +27,7 @@ public:
 	virtual bool execute() = 0;
 	virtual void process() = 0;
 
-	virtual ~Device_driver();
+	virtual ~Device_driver(){};
 };
 
 #endif
