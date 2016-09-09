@@ -281,6 +281,10 @@ build-clang-default:
         code: |
           apt-get -y install libgtest-dev zlib1g-dev openssl libssl-dev libuv1-dev
 
+    - script:
+        name: remove
+        code: |
+          apt-get -y remove gcc
 
     - script:
         name: echo meson & ninja versions
@@ -291,9 +295,8 @@ build-clang-default:
     - script:
         name: build project
         code: |
-          export CXX=clang++
           mkdir build && cd build
-          CXX=clang++ meson ..
+          meson ..
           ninja
 
     - script:
