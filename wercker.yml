@@ -282,7 +282,7 @@ build-clang-default:
           apt-get -y install libgtest-dev zlib1g-dev openssl libssl-dev libuv1-dev
 
     - script:
-        name: remove
+        name: remove gcc compiler
         code: |
           apt-get -y remove gcc
 
