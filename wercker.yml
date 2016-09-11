@@ -317,11 +317,6 @@ build-clang-default:
           apt-get -y install libgtest-dev zlib1g-dev openssl libssl-dev libuv1-dev
 
     - script:
-        name: remove gcc compiler
-        code: |
-          apt-get -y remove gcc
-
-    - script:
         name: install meson
         code: |
           pip3 install meson
@@ -342,6 +337,11 @@ build-clang-default:
         code: |
           meson --version
           ninja --version
+
+    - script:
+        name: remove gcc compiler
+        code: |
+          apt-get -y remove gcc
 
     - script:
         name: build project
