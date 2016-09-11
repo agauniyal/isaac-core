@@ -9,7 +9,7 @@
 			"program": "${workspaceRoot}/build/app/isaac-app",
 			"args": [],
 			"stopAtEntry": true,
-			"cwd": "${workspaceRoot}/debug",
+			"cwd": "${workspaceRoot}/build/app",
 			"environment": [],
 			"externalConsole": true,
 			"linux": {
@@ -30,7 +30,7 @@
 			"program": "${workspaceRoot}/build/test/testexe",
 			"args": [],
 			"stopAtEntry": true,
-			"cwd": "${workspaceRoot}/debug",
+			"cwd": "${workspaceRoot}/build/test",
 			"environment": [],
 			"externalConsole": false,
 			"linux": {

@@ -28,3 +28,6 @@ endif
 subdir('src')
 subdir('app')
 subdir('test')
+
+emulate_rasp = find_program('scripts/emulate_rasp.sh')
+run_target('emulate', command : emulate_rasp.path())

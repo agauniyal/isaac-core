@@ -8,7 +8,7 @@ std::string gpio::getGPIOBasePath(const std::string _file)
 	if (config) {
 		std::getline(config, path);
 	} else {
-		return "raspi/path";
+		return "debug/raspi/path";
 	}
 	return path;
 }
