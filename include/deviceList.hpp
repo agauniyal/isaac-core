@@ -2,7 +2,9 @@
 #define DEVICE_LIST_HPP
 
 #include "device.hpp"
+#include <memory>
 #include <unordered_map>
+#include <utility>
 
 namespace deviceList {
 
@@ -11,13 +13,16 @@ namespace deviceList {
 using umap = std::unordered_map<std::string, std::unique_ptr<Device>>;
 
 // array of name and ID tuple
-using arrNameID = std::tuple<std::string, std::string>;
+using arrNameId = std::vector<std::pair<std::string, std::string>>;
 
-void removeBad(const umap);
-arrNameID getFailed(const umap);
-arrNameID getBad(const umap);
-arrNameID getMounted(const umap);
-arrNameID getUnmounted(const umap);
+arrNameId getAll(const umap);
+arrNameId getFailed(const umap);
+arrNameId getBad(const umap);
+arrNameId getMounted(const umap);
+arrNameId getUnmounted(const umap);
+
+void removeBad(umap);
+bool removeId(const std::string, umap);
 }
 
 #endif

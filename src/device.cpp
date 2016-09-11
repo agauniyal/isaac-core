@@ -158,6 +158,8 @@ void Device::setName(const std::string _n)
 	std::lock_guard<std::mutex> lock(m_meta);
 	name = _n.substr(0, 20);
 }
+
+
 void Device::setInfo(const std::string _o)
 {
 	std::lock_guard<std::mutex> lock(m_meta);
