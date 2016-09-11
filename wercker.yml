@@ -40,12 +40,17 @@ build-gcc-default:
     - script:
         name: install meson & ninja dependencies
         code: |
-          apt-get -y install git curl wget meson python3 ninja-build lcov cppcheck valgrind pkg-config
+          apt-get -y install git curl wget python3 python3-pip ninja-build lcov cppcheck valgrind pkg-config
 
     - script:
         name: install project dependencies
         code: |
           apt-get -y install libgtest-dev zlib1g-dev openssl libssl-dev libuv1-dev
+
+    - script:
+        name: install meson
+        code: |
+          pip3 install meson
 
     - script:
         name: echo meson & ninja versions
@@ -59,6 +64,12 @@ build-gcc-default:
           mkdir build && cd build
           meson ..
           ninja
+
+    - script:
+        name: emulate rasp gpio
+        code: |
+          cd build
+          ninja emulate
 
     - script:
         name: test project
@@ -139,6 +150,12 @@ build-gcc-5:
           mkdir build && cd build
           meson.py ..
           ninja
+
+    - script:
+        name: emulate rasp gpio
+        code: |
+          cd build
+          ninja emulate
 
     - script:
         name: test project
@@ -223,6 +240,12 @@ build-gcc-6:
           ninja
 
     - script:
+        name: emulate rasp gpio
+        code: |
+          cd build
+          ninja emulate
+
+    - script:
         name: test project
         code: |
           cd build
@@ -274,7 +297,7 @@ build-clang-default:
     - script:
         name: install meson & ninja dependencies
         code: |
-          apt-get -y install git curl wget meson python3 ninja-build lcov cppcheck valgrind pkg-config
+          apt-get -y install git curl wget python3 python3-pip ninja-build lcov cppcheck valgrind pkg-config
 
     - script:
         name: install project dependencies
@@ -285,6 +308,11 @@ build-clang-default:
         name: remove gcc compiler
         code: |
           apt-get -y remove gcc
+
+    - script:
+        name: install meson
+        code: |
+          pip3 install meson
 
     - script:
         name: echo meson & ninja versions
@@ -298,6 +326,12 @@ build-clang-default:
           mkdir build && cd build
           meson ..
           ninja
+
+    - script:
+        name: emulate rasp gpio
+        code: |
+          cd build
+          ninja emulate
 
     - script:
         name: test project
