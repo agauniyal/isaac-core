@@ -51,6 +51,7 @@ build-gcc-default:
         name: install meson
         code: |
           pip3 install meson
+          ln -s /usr/bin/meson.py /usr/bin/meson
 
     - script:
         name: echo meson & ninja versions
@@ -137,11 +138,12 @@ build-gcc-5:
         name: install meson
         code: |
           pip3 install meson
+          ln -s /usr/bin/meson.py /usr/bin/meson
 
     - script:
         name: echo meson & ninja versions
         code: |
-          meson.py --version
+          meson --version
           ninja --version
 
     - script:
@@ -225,11 +227,12 @@ build-gcc-6:
         name: install meson
         code: |
           pip3 install meson
+          ln -s /usr/bin/meson.py /usr/bin/meson
 
     - script:
         name: echo meson & ninja versions
         code: |
-          meson.py --version
+          meson --version
           ninja --version
 
     - script:
@@ -313,6 +316,7 @@ build-clang-default:
         name: install meson
         code: |
           pip3 install meson
+          ln -s /usr/bin/meson.py /usr/bin/meson
 
     - script:
         name: echo meson & ninja versions
