@@ -10,6 +10,9 @@ private:
 	std::mutex m_lastAccess;
 	std::chrono::time_point<std::chrono::system_clock> lastAccess;
 
+	Led(const Led &) = delete;
+	Led &operator=(const Led &) = delete;
+
 public:
 	Led(const unsigned int, const std::string = "");
 	bool isOn() { return pinStatus(); }

@@ -39,6 +39,7 @@ public:
 
 	std::string getId() const { return id; }
 	bool hasFailed() const { return failState; }
+	bool isMounted() const { return exported; }
 	bool pinStatus() const { return pinValue; }
 
 	// 0 => 'in' | 1 => 'out'

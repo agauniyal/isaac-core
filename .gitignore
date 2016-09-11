@@ -33,6 +33,8 @@
 build
 debug/raspi
 subprojects/uWebSockets
+subprojects/json-2.0.3
+subprojects/packagecache
 
 # Not Ignored
 !.vscode/launch.json

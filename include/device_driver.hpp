@@ -22,6 +22,8 @@ public:
 	using Device::write;
 	using Device::read;
 
+	bool isBad() { return !isMounted() && hasFailed(); }
+
 	virtual bool on()      = 0;
 	virtual bool off()     = 0;
 	virtual bool execute() = 0;
