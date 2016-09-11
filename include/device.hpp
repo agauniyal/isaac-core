@@ -15,7 +15,7 @@ class Device {
 	std::string id;
 
 	// 0 => 'in' | 1 => 'out'
-	std::atomic<bool> pinValue;
+	std::atomic<bool> pinIO;
 
 	static const std::string GPIO_PATH;
 
@@ -40,7 +40,7 @@ public:
 	std::string getId() const { return id; }
 	bool hasFailed() const { return failState; }
 	bool isMounted() const { return exported; }
-	bool pinStatus() const { return pinValue; }
+	bool pinStatus() const { return pinIO; }
 
 	// 0 => 'in' | 1 => 'out'
 	bool setDirection(bool);

@@ -125,7 +125,7 @@ bool Device::write(const bool _val)
 	setDirection(true);
 	if (writeStream && exported && !failState) {
 		writeStream << _val;
-		pinValue = _val;
+		pinIO = _val;
 		return true;
 	} else {
 		failState = true;
@@ -144,12 +144,12 @@ bool Device::read()
 	if (readStream && exported && !failState) {
 		bool result = false;
 		readStream >> result;
-		pinValue = result;
+		pinIO = result;
 	} else {
 		failState = true;
 		// TODO: LOG here
 	}
-	return pinValue;
+	return pinIO;
 }
 
 

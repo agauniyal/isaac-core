@@ -20,6 +20,7 @@ public:
 	void process() override {}
 	bool on() override { return write(true); }
 	bool off() override;
+	auto getLastAccessed() const { return lastAccess; }
 };
 
 #endif

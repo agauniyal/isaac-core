@@ -6,7 +6,6 @@ using namespace uWS;
 
 int main()
 {
-	Device D1(4);
 	try {
 		EventSystem es(MASTER);
 		Server server(es, 3000, PERMESSAGE_DEFLATE, 0);
