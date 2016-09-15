@@ -9,6 +9,7 @@ start-build:
         name: report system
         code: |
           cat /proc/version
+          cat /etc/*release
 
 build-gcc-default:
 
