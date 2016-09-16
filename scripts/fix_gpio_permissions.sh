@@ -20,9 +20,9 @@ read -r -d '' CONTENTS <<- EORULE
 	KERNEL=="ttyS0", PROGRAM="/bin/sh -c 'ALIASES=/proc/device-tree/aliases; if cmp -s $ALIASES/uart1 $ALIASES/serial0; then echo 0; elif cmp -s $ALIASES/uart1 $ALIASES/serial1; then echo 1; else exit 1; fi '", SYMLINK+="serial%c"
 EORULE
 
-Green='\033[0;32m'
-Red='\033[0;31m'
-Yellow='\033[0;33m'
+Green='\033[42;1m'
+Red='\033[41;1m'
+Yellow='\033[33;1m'
 NC='\033[0m'
 echo -e "${Yellow}WARNING: You should do this only on a development board.${NC}";
 
@@ -32,8 +32,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     echo "$CONTENTS" > "$destdir"
 	udevadm trigger
-	echo -e "${Green}Rules exported and udev reloaded!${NC}"
+	echo -e "${Green}INFO: Rules exported, udev reloaded.${NC}"
 else
-	echo -e "${Red}Aborted.${NC}"
+	echo -e "${Red}ERROR: Aborted.${NC}"
 fi
 
