@@ -2,11 +2,11 @@
 #include <uWS.h>
 #include "device.hpp"
 
-using namespace uWS;
-
 int main()
 {
+
 	try {
+		using namespace uWS;
 		EventSystem es(MASTER);
 		Server server(es, 3000, PERMESSAGE_DEFLATE, 0);
 
