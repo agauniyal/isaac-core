@@ -32,8 +32,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     echo "$CONTENTS" > "$destdir"
 	udevadm trigger
-	echo -e "${Green}INFO: Rules exported, udev reloaded.${NC}"
+	echo -e "${Green}INFO: Rules exported, udev reloaded ✔${NC}"
 else
-	echo -e "${Red}ERROR: Aborted.${NC}"
+	echo -e "${Red}ERROR: Aborted ✖${NC}"
 fi
 
