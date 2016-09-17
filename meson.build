@@ -31,3 +31,6 @@ subdir('test')
 
 emulate_rasp = find_program('scripts/emulate_rasp.sh')
 run_target('emulate', command : emulate_rasp.path())
+
+fix_gpio_permissions = find_program('scripts/fix_gpio_permissions.sh')
+run_target('fixGpioPermissions', command : fix_gpio_permissions.path())
