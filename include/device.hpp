@@ -1,11 +1,14 @@
 #ifndef DEVICE_HPP
 #define DEVICE_HPP
 
-#include "utils.hpp"
+#include "gpio.hpp"
 #include <atomic>
 #include <mutex>
-#include <string>
+#include <json.hpp>
 
+namespace isaac {
+
+using json = nlohmann::json;
 
 class Device {
 
@@ -24,37 +27,51 @@ class Device {
 	std::mutex m_occupied;
 
 	std::string name;
-	std::string info;
+	json info;
 	std::mutex m_meta;
 
 	Device(const Device &) = delete;
 	Device &operator=(const Device &) = delete;
 
-public:
-	// Pin number and Device name
-	Device(const unsigned int, const std::string = "");
-
-	bool write(bool);
-	bool read();
-
-	std::string getId() const { return id; }
-	bool hasFailed() const { return failState; }
-	bool isMounted() const { return exported; }
-	bool pinStatus() const { return pinIO; }
+protected:
+	virtual void mount();
+	virtual void unmount();
 
 	// 0 => 'in' | 1 => 'out'
 	bool setDirection(bool);
-	bool getDirection();
+	bool readDirection();
 
-	void mount();
-	void unmount();
+	// pinNumber and deviceName
+	Device(const unsigned int, const std::string = "");
 
-	void setName(const std::string);
-	void setInfo(const std::string);
+public:
+	std::string getId() const { return id; }
+
+	bool hasFailed() const { return failState; }
+	bool isMounted() const { return exported; }
+	virtual bool isBad() const { return !isMounted() && hasFailed(); }
+
 	std::string getName() const { return name; }
-	std::string getInfo() const { return info; }
+	json getInfo() const { return info; }
+	bool pinIOStatus() const { return pinIO; }
 
-	~Device();
+	void setName(const std::string = "DEFAULT DEVICE NAME");
+	void setInfo(const json = json::object());
+
+	static bool isOccupied(const unsigned int _p)
+	{
+		return (_p > gpio::NumPins) ? false : occupied[_p];
+	}
+
+	virtual bool on();
+	virtual bool off();
+	virtual bool read();
+
+	virtual bool execute() = 0;
+	virtual void process() = 0;
+
+	virtual ~Device();
 };
+}
 
 #endif

@@ -1,9 +1,11 @@
-#include "utils.hpp"
+#include "gpio.hpp"
 #include <fstream>
 #include <sstream>
-#include "json.hpp"
+#include <json.hpp>
+#include <stdexcept>
 
-std::string gpio::getGPIOBasePath(const std::string _file)
+
+std::string isaac::gpio::getGPIOBasePath(const std::string _file)
 {
 	using json = nlohmann::json;
 
@@ -16,6 +18,6 @@ std::string gpio::getGPIOBasePath(const std::string _file)
 		return json_config["path"];
 
 	} else {
-		return "debug/raspi/path";
+		throw std::runtime_error("cannot read config.json");
 	}
 }
