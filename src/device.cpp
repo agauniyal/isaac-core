@@ -2,17 +2,19 @@
 #include <fstream>
 #include <algorithm>
 
+using namespace isaac;
 
-const std::string Device::GPIO_PATH  = gpio::getGPIOBasePath("config.txt");
+const std::string Device::GPIO_PATH  = gpio::getGPIOBasePath("config.json");
 bool Device::occupied[gpio::NumPins] = { 0 };
 
 
 Device::Device(const unsigned int _p, const std::string _n)
     : powerPin(_p), failState(true), exported(false), name(_n)
 {
-	if (powerPin < 0 || powerPin > gpio::NumPins) {
+	if (powerPin > gpio::NumPins) {
 		// TODO: LOG error here
 	} else {
+		name = (name == "") ? "DEFAULT DEVICE NAME" : name;
 		std::lock_guard<std::mutex> lock(m_occupied);
 		// TODO: generate a unique id here and assign to ID var
 		if (!occupied[powerPin]) {
@@ -20,6 +22,7 @@ Device::Device(const unsigned int _p, const std::string _n)
 			occupied[powerPin] = true;
 			failState          = false;
 			mount();
+			pinIO = readDirection();
 		} else {
 			// TODO: Log pin already occupied
 		}
@@ -98,17 +101,17 @@ bool Device::setDirection(bool _dir)
 }
 
 
-bool Device::getDirection()
+bool Device::readDirection()
 {
 	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/direction";
 
-	bool direction = 1;  // "out"
+	bool direction = true;  // "out"
 	std::string input(3, ' ');
 	std::ifstream dirStream(path.c_str());
 	if (dirStream) {
 		dirStream >> input;
 		if (input == "in") {
-			direction = 0;
+			direction = false;  // "in"
 		}
 	} else {
 		failState = true;
@@ -117,15 +120,32 @@ bool Device::getDirection()
 }
 
 
-bool Device::write(const bool _val)
+bool Device::on()
 {
 	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/value";
 
 	std::ofstream writeStream(path.c_str(), std::ofstream::trunc);
-	setDirection(true);
+	setDirection(1);
 	if (writeStream && exported && !failState) {
-		writeStream << _val;
-		pinIO = _val;
+		writeStream << 1;
+		pinIO = 1;
+		return true;
+	} else {
+		failState = true;
+		// TODO: LOG here
+		return false;
+	}
+}
+
+bool Device::off()
+{
+	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/value";
+
+	std::ofstream writeStream(path.c_str(), std::ofstream::trunc);
+	setDirection(1);
+	if (writeStream && exported && !failState) {
+		writeStream << 0;
+		pinIO = 0;
 		return true;
 	} else {
 		failState = true;
@@ -156,14 +176,14 @@ bool Device::read()
 void Device::setName(const std::string _n)
 {
 	std::lock_guard<std::mutex> lock(m_meta);
-	name = _n.substr(0, 20);
+	name = (_n == "") ? "DEFAULT DEVICE NAME" : _n.substr(0, 50);
 }
 
 
-void Device::setInfo(const std::string _o)
+void Device::setInfo(const json _i)
 {
 	std::lock_guard<std::mutex> lock(m_meta);
-	info = _o;
+	info = _i;
 }
 
 

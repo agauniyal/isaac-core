@@ -1,10 +1,11 @@
 #ifndef DEVICE_LED_HPP
 #define DEVICE_LED_HPP
 
-#include "device_driver.hpp"
+#include "device.hpp"
 #include <chrono>
 
-class Led final : public Device_driver {
+namespace isaac {
+class Led final : public Device {
 
 private:
 	std::mutex m_lastAccess;
@@ -14,13 +15,17 @@ private:
 	Led &operator=(const Led &) = delete;
 
 public:
-	Led(const unsigned int, const std::string = "");
-	bool isOn() { return pinStatus(); }
+	Led(const unsigned int _p, const std::string _d = "")
+	    : Device(_p, _d), lastAccess(std::chrono::system_clock::now())
+	{
+		// TODO: Log construction of LED here
+	}
+	bool isOn() { return read(); }
+	bool off() override;
 	bool execute() override { return true; }
 	void process() override {}
-	bool on() override { return write(true); }
-	bool off() override;
 	auto getLastAccessed() const { return lastAccess; }
 };
+}
 
 #endif

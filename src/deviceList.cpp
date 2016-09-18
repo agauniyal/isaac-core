@@ -1,11 +1,12 @@
 #include "deviceList.hpp"
 #include <algorithm>
 
-using deviceList::umap;
-using deviceList::arrNameId;
+
+using isaac::deviceList::umap;
+using isaac::deviceList::arrNameId;
 
 
-arrNameId deviceList::getAll(const umap _list)
+arrNameId isaac::deviceList::getAll(const umap _list)
 {
 	arrNameId result;
 	for (auto it = _list.begin(); it != _list.end();) {
@@ -15,7 +16,7 @@ arrNameId deviceList::getAll(const umap _list)
 }
 
 
-arrNameId deviceList::getFailed(const umap _list)
+arrNameId isaac::deviceList::getFailed(const umap _list)
 {
 	arrNameId result;
 	for (auto it = _list.begin(); it != _list.end();) {
@@ -28,7 +29,7 @@ arrNameId deviceList::getFailed(const umap _list)
 }
 
 
-arrNameId deviceList::getBad(const umap _list)
+arrNameId isaac::deviceList::getBad(const umap _list)
 {
 	arrNameId result;
 	for (auto it = _list.begin(); it != _list.end();) {
@@ -41,7 +42,7 @@ arrNameId deviceList::getBad(const umap _list)
 }
 
 
-arrNameId deviceList::getMounted(const umap _list)
+arrNameId isaac::deviceList::getMounted(const umap _list)
 {
 	arrNameId result;
 	for (auto it = _list.begin(); it != _list.end();) {
@@ -54,7 +55,7 @@ arrNameId deviceList::getMounted(const umap _list)
 }
 
 
-arrNameId deviceList::getUnmounted(const umap _list)
+arrNameId isaac::deviceList::getUnmounted(const umap _list)
 {
 	arrNameId result;
 	for (auto it = _list.begin(); it != _list.end();) {
@@ -67,7 +68,7 @@ arrNameId deviceList::getUnmounted(const umap _list)
 }
 
 
-void deviceList::removeBad(const umap _list)
+void isaac::deviceList::removeBad(const umap _list)
 {
 	for (auto it = _list.begin(); it != _list.end();) {
 		it = it->second->isBad() ? _list.erase(it) : ++it;
@@ -75,7 +76,7 @@ void deviceList::removeBad(const umap _list)
 }
 
 
-bool deviceList::removeId(const std::string _id, umap _list)
+bool isaac::deviceList::removeId(const std::string _id, umap _list)
 {
 	auto device = _list.find(_id);
 	if (device != _list.end()) {
