@@ -4,7 +4,7 @@
 
 ## About
 
-Isaac is a platform for automating all sorts of machines, primarily focused on home appliances. It is currently composed of several different modules including **isaac-core**, **isaac-dashboard**, **isaac-server**, **isaac-web** & **isaac-integrations**. It runs on any development board capable of running linux and is written in c++. Isaac is currently under heavy development and is focusing on first alpha release for now.
+Isaac(Intelligent System And Automation Control) is a platform for automating all sorts of machines, primarily focused on home appliances. It is currently composed of several different modules including **isaac-core**, **isaac-dashboard**, **isaac-server**, **isaac-web** & **isaac-integrations**. **`isaac-core`** is written primarily in modern c++ and is capable enough to run on any development board supporting linux. It is currently under heavy development and is focusing on first alpha release for now.
 
 
 ## Key Features
@@ -14,8 +14,8 @@ Isaac is a platform for automating all sorts of machines, primarily focused on h
 - Efficient websockets implementation instead of weak ajax based polling
 - Uses json format for communication of messages and operations, making integrations easier
 - Powerful logging integration, every bad operation/crash gets tracked
+- Async task-based parallelism
 - Well defined gpio implementation providing abstractions for appliance integrations
-- Async task-based parallelism for longer tasks
 - *More coming soon...*
 
 
@@ -25,14 +25,29 @@ Isaac-core(current repository) is written in c++14 and is built using meson buil
 - Json
 - spdlog
 
-which might have their own sub-dependencies. However the build configuration has been automatized and it builds the project fetching required dependencies on its own. Emulation of development board is also in progress and some parts like access to gpio pins have been emulated so far.
+which might have their own sub-dependencies. However the build configuration has been fully automatized and it builds the project fetching required dependencies on its own. Emulation of development board is also in progress and some parts like access to gpio pins have been emulated so far. The project is tested continously against multiple compilers and code coverage is calculated for every commit added to the project.
 
 ### How to build
-The **recommended way** is to install docker and pull the docker image - agauniyal/isaac-app. It contains everything you need to work on the development of isaac app stack and will be updated regularly. Here's an workflow - 
+The **recommended way** is to install docker and pull the docker image - [agauniyal/isaac-app](https://hub.docker.com/r/agauniyal/isaac-app/). It contains everything you need to work on the development of isaac app stack and will be updated regularly. Here's an workflow - 
+
 
 [![asciicast](https://asciinema.org/a/85864.png)](https://asciinema.org/a/85864)
 
-The **other way** is to setup your own machine with all the dependencies needed to build the project. The list includes but isn't limited to libuv1, openssl, zlib, git, meson, pkgconfig and ninja build system. You can take a look at wercker.yml file in project's root which contains all the necessary step to build this project.
+
+The **other way** is to setup your own machine with all the dependencies needed to build the project. The list includes but isn't limited to libuv1, openssl, zlib, git, meson, pkgconfig and ninja build system. You can take a look at [wercker.yml](https://github.com/agauniyal/isaac-core/blob/develop/wercker.yml) file in project's root which contains all the necessary step to build this project. Feel free to open any number of [issues here](https://github.com/agauniyal/isaac-core/issues). PRs are also [welcomed](https://github.com/agauniyal/isaac-core/pulls).
+
+## Progress
+
+Progress can be tracked by milestones and project cards which are regularly updated. The links to the following are given below - 
+
+ - Project cards - https://github.com/agauniyal/isaac-core/projects
+ - Milestones - https://github.com/agauniyal/isaac-core/milestones
+ - Completed Milestones - https://github.com/agauniyal/isaac-core/milestones?state=closed
+
+#### Contact
+ - agauniyal@outlook.com
+ - jeetugalav15@gmail.com
+
 
 ## License
 
