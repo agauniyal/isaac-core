@@ -32,10 +32,10 @@
 .vscode/*
 build
 debug/raspi
-!subprojects/*.wrap
-subprojects
+subprojects/*
 
 # Not Ignored
 !.vscode/launch.json
 !.vscode/tasks.json
 !.vscode/c_cpp_properties.json
+!subprojects/*.wrap
