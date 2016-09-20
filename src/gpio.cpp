@@ -4,8 +4,9 @@
 #include <json.hpp>
 #include <stdexcept>
 
+using namespace isaac;
 
-std::string isaac::gpio::getGPIOBasePath(const std::string _file)
+std::string gpio::getGPIOBasePath(const std::string _file)
 {
 	using json = nlohmann::json;
 

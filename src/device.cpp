@@ -7,24 +7,37 @@ using namespace isaac;
 const std::string Device::GPIO_PATH  = gpio::getGPIOBasePath("config.json");
 bool Device::occupied[gpio::NumPins] = { 0 };
 
+const std::shared_ptr<spdlog::logger> Device::logger
+  = spdlog::rotating_logger_mt("D_Logger", "deviceLogs", 1048576 * 5, 3);
+
 
 Device::Device(const unsigned int _p, const std::string _n)
-    : powerPin(_p), failState(true), exported(false), name(_n)
+    : powerPin(_p), failState(true), exported(false)
 {
-	if (powerPin > gpio::NumPins) {
-		// TODO: LOG error here
+	if (_n.size() == 0) {
+		name = "DEFAULT DEVICE NAME";
 	} else {
-		name = (name == "") ? "DEFAULT DEVICE NAME" : name;
-		std::lock_guard<std::mutex> lock(m_occupied);
-		// TODO: generate a unique id here and assign to ID var
-		if (!occupied[powerPin]) {
-			// TODO: Log pin successfully occupied
-			occupied[powerPin] = true;
-			failState          = false;
+		name = (_n.size() < 50) ? _n : _n.substr(0, 50);
+	}
+	if (powerPin > gpio::NumPins) {
+		logger->error("Pin <{}> is not valid", powerPin);
+	} else {
+
+		// only 1 thread can enter following section at a time
+		{
+			std::lock_guard<std::mutex> lock(m_occupied);
+			if (!occupied[powerPin]) {
+				occupied[powerPin] = true;
+				failState          = false;
+			}
+		}
+
+		if (!failState) {
 			mount();
 			pinIO = readDirection();
+			logger->info("Device <{}> with pin <{}> mounted", name, powerPin);
 		} else {
-			// TODO: Log pin already occupied
+			logger->error("Device <{}> with pin <{}> cannot be created", name, powerPin);
 		}
 	}
 }
@@ -33,16 +46,19 @@ Device::Device(const unsigned int _p, const std::string _n)
 void Device::mount()
 {
 	if (exported) {
-		// TODO: Log 'pin is already exported'
+		logger->warn("Pin <{}> is already exported", powerPin);
 		return;
 	}
 
 	if (failState) {
-		// TODO: Log 'cannot export, device in failed state'
+		logger->error("Cannot mount device <{}>, because it has failed", name);
 		return;
 	}
 
-	const std::string path = GPIO_PATH + "/export";
+	std::string path;
+	path.reserve(25);
+	path.append(GPIO_PATH).append("/export");
+
 	std::ofstream gpioexport(path.c_str(), std::ofstream::trunc);
 	if (gpioexport) {
 		gpioexport << powerPin;
@@ -51,7 +67,7 @@ void Device::mount()
 	} else {
 		failState = true;
 		exported  = false;
-		// TODO: LOG error here
+		logger->error("Cannot mount device <{}>, <{}> is inaccessible", name, path);
 	}
 }
 
@@ -59,16 +75,19 @@ void Device::mount()
 void Device::unmount()
 {
 	if (!exported) {
-		// TODO: Log 'pin is already unexported'
+		logger->warn("Pin <{}> is already unexported", powerPin);
 		return;
 	}
 
 	if (failState) {
-		// TODO: Log 'cannot unexport, device in failed state'
-		// but don't return yet, try to unexport
+		logger->error("Cannot unmount device <{}>, because it has failed", name);
+		// Don't return yet, try to unexport
 	}
 
-	const std::string path = GPIO_PATH + "/unexport";
+	std::string path;
+	path.reserve(25);
+	path.append(GPIO_PATH).append("/unexport");
+
 	std::ofstream gpiounexport(path.c_str(), std::ofstream::trunc);
 	if (gpiounexport) {
 		gpiounexport << powerPin;
@@ -76,7 +95,7 @@ void Device::unmount()
 		exported  = false;
 	} else {
 		failState = true;
-		// TODO: LOG error here
+		logger->error("Cannot unmount device <{}>, <{}> is inaccessible", name, path);
 	}
 }
 
@@ -86,7 +105,9 @@ bool Device::setDirection(bool _dir)
 	// 0 => 'in' | 1 => 'out'
 	const std::string direction = _dir ? "out" : "in";
 
-	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/direction";
+	std::string path;
+	path.reserve(40);
+	path.append(GPIO_PATH).append("/gpio").append(std::to_string(powerPin)).append("/direction");
 
 	std::ofstream dirStream(path.c_str(), std::ofstream::trunc);
 	if (dirStream) {
@@ -94,7 +115,7 @@ bool Device::setDirection(bool _dir)
 		failState = false;
 	} else {
 		failState = true;
-		// TODO: LOG error here
+		logger->error("Cannot set direction on device <{}>, <{}> is inaccessible", name, path);
 		return false;
 	}
 	return true;
@@ -103,7 +124,9 @@ bool Device::setDirection(bool _dir)
 
 bool Device::readDirection()
 {
-	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/direction";
+	std::string path;
+	path.reserve(40);
+	path.append(GPIO_PATH).append("/gpio").append(std::to_string(powerPin)).append("/direction");
 
 	bool direction = true;  // "out"
 	std::string input(3, ' ');
@@ -115,6 +138,7 @@ bool Device::readDirection()
 		}
 	} else {
 		failState = true;
+		logger->error("Cannot read direction of device <{}>, <{}> is inaccessible", name, path);
 	}
 	return direction;
 }
@@ -122,24 +146,29 @@ bool Device::readDirection()
 
 bool Device::on()
 {
-	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/value";
+	std::string path;
+	path.reserve(40);
+	path.append(GPIO_PATH).append("/gpio").append(std::to_string(powerPin)).append("/value");
 
 	std::ofstream writeStream(path.c_str(), std::ofstream::trunc);
 	setDirection(1);
 	if (writeStream && exported && !failState) {
 		writeStream << 1;
 		pinIO = 1;
+		logger->info("Device <{}> turned ON", name);
 		return true;
 	} else {
 		failState = true;
-		// TODO: LOG here
+		logger->error("Cannot turn on device <{}>, <{}> is inaccessible", name, path);
 		return false;
 	}
 }
 
 bool Device::off()
 {
-	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/value";
+	std::string path;
+	path.reserve(40);
+	path.append(GPIO_PATH).append("/gpio").append(std::to_string(powerPin)).append("/value");
 
 	std::ofstream writeStream(path.c_str(), std::ofstream::trunc);
 	setDirection(1);
@@ -149,7 +178,7 @@ bool Device::off()
 		return true;
 	} else {
 		failState = true;
-		// TODO: LOG here
+		logger->error("Cannot turn off device <{}>, <{}> is inaccessible", name, path);
 		return false;
 	}
 }
@@ -157,7 +186,9 @@ bool Device::off()
 
 bool Device::read()
 {
-	const std::string path = GPIO_PATH + "/gpio" + std::to_string(powerPin) + "/value";
+	std::string path;
+	path.reserve(40);
+	path.append(GPIO_PATH).append("/gpio").append(std::to_string(powerPin)).append("/value");
 
 	std::ifstream readStream(path.c_str());
 	setDirection(false);
@@ -167,7 +198,7 @@ bool Device::read()
 		pinIO = result;
 	} else {
 		failState = true;
-		// TODO: LOG here
+		logger->error("Cannot read device <{}>, <{}> is inaccessible", name, path);
 	}
 	return pinIO;
 }
@@ -175,15 +206,26 @@ bool Device::read()
 
 void Device::setName(const std::string _n)
 {
-	std::lock_guard<std::mutex> lock(m_meta);
-	name = (_n == "") ? "DEFAULT DEVICE NAME" : _n.substr(0, 50);
+	if (_n.size() == 0) {
+		return;
+	}
+	const auto oldName = name;
+	{
+		std::lock_guard<std::mutex> lock(m_meta);
+		name = (_n.size() < 50) ? _n : _n.substr(0, 50);
+	}
+	logger->info("<{}> name changed to <{}>", oldName, name);
 }
 
 
 void Device::setInfo(const json _i)
 {
-	std::lock_guard<std::mutex> lock(m_meta);
-	info = _i;
+	const auto oldInfo = info;
+	{
+		std::lock_guard<std::mutex> lock(m_meta);
+		info = _i;
+	}
+	logger->info("Device <{}> info\n{}\nchanged to\n{}", name, oldInfo.dump(4), info.dump(4));
 }
 
 
@@ -193,8 +235,8 @@ Device::~Device()
 	if (occupied[powerPin]) {
 		occupied[powerPin] = false;
 		unmount();
-		// TODO: Log pin successfully removed
+		logger->info("Device <{}> removed along with pin <{}>", name, powerPin);
 	} else {
-		// TODO: Log pin wasn't occupied, something's wrong
+		logger->critical("Pin number <{}> wasn't occupied by device <{}>", powerPin, name);
 	}
 }

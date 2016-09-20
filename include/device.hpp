@@ -5,6 +5,8 @@
 #include <atomic>
 #include <mutex>
 #include <json.hpp>
+#include <memory>
+#include <spdlog/spdlog.h>
 
 namespace isaac {
 
@@ -15,7 +17,8 @@ class Device {
 	unsigned int powerPin;
 	std::atomic<bool> failState;
 	std::atomic<bool> exported;
-	std::string id;
+
+	char id[8];
 
 	// 0 => 'in' | 1 => 'out'
 	std::atomic<bool> pinIO;
@@ -30,12 +33,14 @@ class Device {
 	json info;
 	std::mutex m_meta;
 
+	void mount();
+	void unmount();
+
 	Device(const Device &) = delete;
 	Device &operator=(const Device &) = delete;
 
 protected:
-	virtual void mount();
-	virtual void unmount();
+	static const std::shared_ptr<spdlog::logger> logger;
 
 	// 0 => 'in' | 1 => 'out'
 	bool setDirection(bool);
@@ -62,6 +67,8 @@ public:
 	{
 		return (_p > gpio::NumPins) ? false : occupied[_p];
 	}
+
+	static void configure() { logger->set_pattern(" %c - [%l][%t] \"%v\" "); }
 
 	virtual bool on();
 	virtual bool off();

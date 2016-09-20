@@ -1,6 +1,8 @@
 #include <iostream>
 #include <uWS.h>
-#include "device.hpp"
+#include "device_LED.hpp"
+
+using namespace isaac;
 
 int main()
 {
@@ -17,7 +19,7 @@ int main()
 		server.onDisconnection([](WebSocket socket, int code, char *message, size_t length) {});
 
 		es.run();
-	} catch (...) {
-		std::cerr << "ERR_LISTEN" << std::endl;
+	} catch (const std::exception &ex) {
+		std::cerr << ex.what() << std::endl;
 	}
 }

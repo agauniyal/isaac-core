@@ -1,11 +1,8 @@
 #include <gtest/gtest.h>
 #include "device_LED.hpp"
-#include "gpio.hpp"
 #include <fstream>
-#include <json.hpp>
 
 using namespace isaac;
-using json = nlohmann::json;
 
 /**
  ** NOTE: Add 100ms delay after device/child constructor is called
@@ -20,6 +17,7 @@ using json = nlohmann::json;
  **			std::this_thread::sleep_for(100ms);
  **
 */
+
 
 TEST(getGPIOBasePath, configFilePresent)
 {
@@ -44,7 +42,7 @@ TEST(getGPIOBasePath, configFileNotPresent)
 	ASSERT_THROW(gpio::getGPIOBasePath(file), std::runtime_error);
 }
 
-TEST(Device, StaticMethods)
+TEST(StaticMethods, Device)
 {
 	const unsigned pinNumber = 2;
 	ASSERT_FALSE(Device::isOccupied(pinNumber));
@@ -72,24 +70,30 @@ TEST(Device, Name)
 
 TEST(Device, Info)
 {
-
-	Led device_sub(5, "I've Info");
-	EXPECT_EQ("I've Info", device_sub.getName());
+	Led device_sub(6, "Green LED");
+	EXPECT_EQ("Green LED", device_sub.getName());
 
 	ASSERT_EQ("null", device_sub.getInfo().dump());
 
 	json newInfo = { { "manufacturer", "Company 1" }, { "consumption", "10W" } };
 	device_sub.setInfo(newInfo);
 	ASSERT_EQ(newInfo, device_sub.getInfo());
+
+	json modifyInfo      = device_sub.getInfo();
+	modifyInfo["colour"] = "green";
+	device_sub.setInfo(modifyInfo);
+	ASSERT_EQ(modifyInfo, device_sub.getInfo());
 }
 
 TEST(LedDevice, Constructor)
 {
-	Led led1(4, "MyLED");
+	Led led1(7, "MyLED");
 	EXPECT_FALSE(led1.hasFailed());
 	EXPECT_FALSE(led1.isBad());
+
 	// always returns true for LEDs
 	ASSERT_TRUE(led1.execute());
+
 	EXPECT_FALSE(led1.isOn());
 
 	// Empty method for now
@@ -98,7 +102,7 @@ TEST(LedDevice, Constructor)
 
 TEST(LedDevice, OnOff)
 {
-	Led led1(5, "MyLED");
+	Led led1(8, "Booms");
 	EXPECT_FALSE(led1.isBad());
 
 	// now call on()
@@ -109,3 +113,28 @@ TEST(LedDevice, OnOff)
 	ASSERT_EQ(true, led1.off());
 	EXPECT_FALSE(led1.isBad());
 }
+
+// TEST(Brute, Lifecycle)
+// {
+// 	for (int i = 0; i < 500; ++i) {
+// 		{
+// 			Led led1(1, "MyLED");
+// 			Led led2(2, "MyLED");
+// 			Led led3(3, "MyLED");
+// 			Led led4(4, "MyLED");
+// 			Led led5(5, "MyLED");
+
+// 			EXPECT_TRUE(led1.on());
+// 			EXPECT_TRUE(led2.on());
+// 			EXPECT_TRUE(led3.on());
+// 			EXPECT_TRUE(led4.on());
+// 			EXPECT_TRUE(led5.on());
+
+// 			EXPECT_TRUE(led1.off());
+// 			EXPECT_TRUE(led2.off());
+// 			EXPECT_TRUE(led3.off());
+// 			EXPECT_TRUE(led4.off());
+// 			EXPECT_TRUE(led5.off());
+// 		}
+// 	}
+// }

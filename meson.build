@@ -10,6 +10,9 @@ uWS_dep = dependency('uWS', fallback : ['uWS', 'uWS_dep'])
 json_sp = subproject('json')
 json_dep = json_sp.get_variable('json_dep')
 
+spdlog_sp = subproject('spdlog')
+spdlog_dep = spdlog_sp.get_variable('spdlog_dep')
+
 gtest = dependency('gtest', main : true, required : false)
 
 if not gtest.found()
