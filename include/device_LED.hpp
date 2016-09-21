@@ -15,8 +15,8 @@ private:
 	Led &operator=(const Led &) = delete;
 
 public:
-	Led(const unsigned int _p, const std::string _d = "")
-	    : Device(_p, _d), lastAccess(std::chrono::system_clock::now())
+	Led(const unsigned int _p, const std::string _d = "", const std::string _id = "")
+	    : Device(_p, _d, _id), lastAccess(std::chrono::system_clock::now())
 	{
 		// TODO: Log construction of LED here
 	}

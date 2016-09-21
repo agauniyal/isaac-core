@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "device_LED.hpp"
+#include "deviceList.hpp"
 #include <fstream>
 
 using namespace isaac;
@@ -114,27 +115,136 @@ TEST(LedDevice, OnOff)
 	EXPECT_FALSE(led1.isBad());
 }
 
-// TEST(Brute, Lifecycle)
-// {
-// 	for (int i = 0; i < 500; ++i) {
-// 		{
-// 			Led led1(1, "MyLED");
-// 			Led led2(2, "MyLED");
-// 			Led led3(3, "MyLED");
-// 			Led led4(4, "MyLED");
-// 			Led led5(5, "MyLED");
+TEST(Brute, Lifecycle)
+{
+	for (int i = 0; i < 100; ++i) {
+		{
+			Led led1(1, "MyLED");
+			Led led2(2, "MyLED");
+			Led led3(3, "MyLED");
+			Led led4(4, "MyLED");
+			Led led5(5, "MyLED");
 
-// 			EXPECT_TRUE(led1.on());
-// 			EXPECT_TRUE(led2.on());
-// 			EXPECT_TRUE(led3.on());
-// 			EXPECT_TRUE(led4.on());
-// 			EXPECT_TRUE(led5.on());
+			EXPECT_TRUE(led1.on());
+			EXPECT_TRUE(led2.on());
+			EXPECT_TRUE(led3.on());
+			EXPECT_TRUE(led4.on());
+			EXPECT_TRUE(led5.on());
 
-// 			EXPECT_TRUE(led1.off());
-// 			EXPECT_TRUE(led2.off());
-// 			EXPECT_TRUE(led3.off());
-// 			EXPECT_TRUE(led4.off());
-// 			EXPECT_TRUE(led5.off());
-// 		}
-// 	}
-// }
+			EXPECT_TRUE(led1.off());
+			EXPECT_TRUE(led2.off());
+			EXPECT_TRUE(led3.off());
+			EXPECT_TRUE(led4.off());
+			EXPECT_TRUE(led5.off());
+		}
+	}
+}
+
+
+TEST(DeviceList, place)
+{
+	deviceList::umap list;
+	const bool a   = deviceList::place(list, 4, "LED4");
+	const bool b   = deviceList::place(list, 5, "Oops");
+	const bool c   = deviceList::place(list, 4, "OopsAgain");
+	bool allPlaced = a && b && c;
+
+	ASSERT_EQ(3, list.size());
+	ASSERT_EQ(true, allPlaced);
+
+	auto all = deviceList::getAll(list);
+	ASSERT_EQ(3, all.size());
+
+	auto failed = deviceList::getFailed(list);
+	ASSERT_EQ(1, failed.size());
+}
+
+
+TEST(DeviceList, getFailed)
+{
+	deviceList::umap list;
+	deviceList::place(list, 4, "LED4");
+	deviceList::place(list, 4, "Oops");
+	deviceList::place(list, 4, "OopsAgain");
+
+	auto failed = deviceList::getFailed(list);
+	ASSERT_EQ(2, failed.size());
+}
+
+TEST(DeviceList, getBad)
+{
+
+	deviceList::umap list;
+	deviceList::place(list, 4, "LED4");
+	deviceList::place(list, 4, "Oops");
+	deviceList::place(list, 4, "OopsAgain");
+
+	auto bad = deviceList::getBad(list);
+	ASSERT_EQ(2, bad.size());
+
+	// auto a = deviceList::removeId(list, idd);
+}
+
+TEST(DeviceList, getMounted)
+{
+	deviceList::umap list;
+	deviceList::place(list, 4, "LED4");
+	deviceList::place(list, 4, "Oops");
+	deviceList::place(list, 4, "OopsAgain");
+	deviceList::place(list, 7, "LED7");
+
+	auto mounted = deviceList::getMounted(list);
+	ASSERT_EQ(2, mounted.size());
+}
+
+
+TEST(DeviceList, getUnmounted)
+{
+	deviceList::umap list;
+	deviceList::place(list, 4, "LED4");
+	deviceList::place(list, 4, "Oops");
+	deviceList::place(list, 4, "OopsAgain");
+	deviceList::place(list, 7, "LED7");
+
+	auto unmounted = deviceList::getUnmounted(list);
+	ASSERT_EQ(2, unmounted.size());
+}
+
+
+TEST(DeviceList, removeBad)
+{
+	deviceList::umap list;
+	deviceList::place(list, 4, "LED4");
+	deviceList::place(list, 4, "Oops");
+	deviceList::place(list, 4, "OopsAgain");
+	deviceList::place(list, 7, "LED7");
+
+	auto all = deviceList::getAll(list);
+	ASSERT_EQ(4, all.size());
+
+	deviceList::removeBad(list);
+
+	all = deviceList::getAll(list);
+	ASSERT_EQ(2, all.size());
+}
+
+
+TEST(DeviceList, removeId)
+{
+	deviceList::umap list;
+	deviceList::place(list, 4, "LED4");
+	deviceList::place(list, 4, "Oops");
+	deviceList::place(list, 6, "LED6");
+
+	auto all = deviceList::getAll(list);
+	ASSERT_EQ(3, all.size());
+
+	auto bad = deviceList::getBad(list);
+	EXPECT_EQ(1, bad.size());
+
+	auto removed = deviceList::removeId(list, bad[0].first);
+	EXPECT_EQ(true, removed);
+
+	all = deviceList::getAll(list);
+	ASSERT_EQ(2, all.size());
+}

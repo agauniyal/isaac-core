@@ -11,14 +11,16 @@ const std::shared_ptr<spdlog::logger> Device::logger
   = spdlog::rotating_logger_mt("D_Logger", "deviceLogs", 1048576 * 5, 3);
 
 
-Device::Device(const unsigned int _p, const std::string _n)
+Device::Device(const unsigned int _p, const std::string _n, const std::string _id)
     : powerPin(_p), failState(true), exported(false)
 {
+	_id.copy(id, 8);
 	if (_n.size() == 0) {
 		name = "DEFAULT DEVICE NAME";
 	} else {
 		name = (_n.size() < 50) ? _n : _n.substr(0, 50);
 	}
+
 	if (powerPin > gpio::NumPins) {
 		logger->error("Pin <{}> is not valid", powerPin);
 	} else {

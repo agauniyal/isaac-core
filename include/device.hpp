@@ -18,7 +18,7 @@ class Device {
 	std::atomic<bool> failState;
 	std::atomic<bool> exported;
 
-	char id[8];
+	char id[9] = {'\0'};
 
 	// 0 => 'in' | 1 => 'out'
 	std::atomic<bool> pinIO;
@@ -47,7 +47,7 @@ protected:
 	bool readDirection();
 
 	// pinNumber and deviceName
-	Device(const unsigned int, const std::string = "");
+	Device(const unsigned int, const std::string = "", const std::string = "");
 
 public:
 	std::string getId() const { return id; }
