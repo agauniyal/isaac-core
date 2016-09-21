@@ -220,14 +220,15 @@ void Device::setName(const std::string _n)
 }
 
 
-void Device::setInfo(const json _i)
+void Device::setDescription(const json _i)
 {
-	const auto oldInfo = info;
+	const auto oldDesc = description;
 	{
 		std::lock_guard<std::mutex> lock(m_meta);
-		info = _i;
+		description = _i;
 	}
-	logger->info("Device <{}> info\n{}\nchanged to\n{}", name, oldInfo.dump(4), info.dump(4));
+	logger->info(
+	  "Device <{}> info\n{}\nchanged to\n{}", name, oldDesc.dump(4), description.dump(4));
 }
 
 

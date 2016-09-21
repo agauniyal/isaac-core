@@ -72,21 +72,21 @@ TEST(Device, Name)
 	ASSERT_EQ(newName, device_sub2.getName());
 }
 
-TEST(Device, Info)
+TEST(Device, Description)
 {
 	Led device_sub(6, "Green LED");
 	EXPECT_EQ("Green LED", device_sub.getName());
 
-	ASSERT_EQ("null", device_sub.getInfo().dump());
+	ASSERT_EQ("null", device_sub.getDescription().dump());
 
-	json newInfo = { { "manufacturer", "Company 1" }, { "consumption", "10W" } };
-	device_sub.setInfo(newInfo);
-	ASSERT_EQ(newInfo, device_sub.getInfo());
+	json newDescription = { { "manufacturer", "Company 1" }, { "consumption", "10W" } };
+	device_sub.setDescription(newDescription);
+	ASSERT_EQ(newDescription, device_sub.getDescription());
 
-	json modifyInfo      = device_sub.getInfo();
-	modifyInfo["colour"] = "green";
-	device_sub.setInfo(modifyInfo);
-	ASSERT_EQ(modifyInfo, device_sub.getInfo());
+	json modifyDescription      = device_sub.getDescription();
+	modifyDescription["colour"] = "green";
+	device_sub.setDescription(modifyDescription);
+	ASSERT_EQ(modifyDescription, device_sub.getDescription());
 }
 
 TEST(LedDevice, Constructor)

@@ -30,7 +30,7 @@ class Device {
 	std::mutex m_occupied;
 
 	std::string name;
-	json info;
+	json description;
 	std::mutex m_meta;
 
 	void mount();
@@ -57,11 +57,11 @@ public:
 	virtual bool isBad() const { return !isMounted() && hasFailed(); }
 
 	std::string getName() const { return name; }
-	json getInfo() const { return info; }
+	json getDescription() const { return description; }
 	bool pinIOStatus() const { return pinIO; }
 
 	void setName(const std::string = "DEFAULT DEVICE NAME");
-	void setInfo(const json = json::object());
+	void setDescription(const json = json::object());
 
 	static bool isOccupied(const unsigned int _p)
 	{
