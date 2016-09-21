@@ -90,6 +90,14 @@ build-gcc-default:
           ./test/testexe
 
     - script:
+        name: valgrind
+        code: |
+          cd build
+          ninja test-valgrind
+          cat meson-logs/testlog-valgrind.txt
+
+
+    - script:
         name: run project
         code: |
           cd build
@@ -175,6 +183,13 @@ build-gcc-5:
           cd build
           ninja test
           ./test/testexe
+
+    - script:
+        name: valgrind
+        code: |
+          cd build
+          ninja test-valgrind
+          cat meson-logs/testlog-valgrind.txt
 
     - script:
         name: run project
@@ -264,6 +279,13 @@ build-gcc-6:
           cd build
           ninja test
           ./test/testexe
+
+    - script:
+        name: valgrind
+        code: |
+          cd build
+          ninja test-valgrind
+          cat meson-logs/testlog-valgrind.txt
 
     - script:
         name: run project
@@ -363,6 +385,13 @@ build-clang-default:
           cd build
           ninja test
           ./test/testexe
+
+    - script:
+        name: valgrind
+        code: |
+          cd build
+          ninja test-valgrind
+          cat meson-logs/testlog-valgrind.txt
 
     - script:
         name: run project

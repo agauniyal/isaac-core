@@ -67,6 +67,9 @@ TEST(Device, Name)
 	std::string newName = "Green Light";
 	device_sub2.setName(newName);
 	ASSERT_EQ(newName, device_sub2.getName());
+
+	device_sub2.setName("");
+	ASSERT_EQ(newName, device_sub2.getName());
 }
 
 TEST(Device, Info)
@@ -218,9 +221,10 @@ TEST(DeviceList, removeBad)
 	deviceList::place(list, 4, "Oops");
 	deviceList::place(list, 4, "OopsAgain");
 	deviceList::place(list, 7, "LED7");
+	deviceList::place(list, 70, "LED70??");
 
 	auto all = deviceList::getAll(list);
-	ASSERT_EQ(4, all.size());
+	ASSERT_EQ(5, all.size());
 
 	deviceList::removeBad(list);
 
@@ -244,6 +248,9 @@ TEST(DeviceList, removeId)
 
 	auto removed = deviceList::removeId(list, bad[0].first);
 	EXPECT_EQ(true, removed);
+
+	removed = deviceList::removeId(list, bad[0].first);
+	EXPECT_EQ(false, removed);
 
 	all = deviceList::getAll(list);
 	ASSERT_EQ(2, all.size());
