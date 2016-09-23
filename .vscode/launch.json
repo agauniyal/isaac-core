@@ -2,7 +2,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "isaac-core",
+			"name": "isaac-app",
 			"type": "cppdbg",
 			"request": "launch",
 			"targetArchitecture": "x64",
@@ -11,7 +11,7 @@
 			"stopAtEntry": true,
 			"cwd": "${workspaceRoot}/build/app",
 			"environment": [],
-			"externalConsole": true,
+			"externalConsole": false,
 			"linux": {
 				"MIMode": "gdb"
 			},
