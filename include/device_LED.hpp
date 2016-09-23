@@ -25,7 +25,7 @@ public:
 
 	void off() override;
 	auto isOn() { return read(); }
-	auto getLastAccessed() const;
+	long getLastAccessed() const;
 	deviceType getType() const override { return deviceType::Led; }
 	json dumpInfo() const override;
 

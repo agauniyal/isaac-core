@@ -84,6 +84,8 @@ TEST(Device, Name)
 {
 	ASSERT_THROW(Led l1(2), std::invalid_argument);
 	ASSERT_THROW(Led l1(2, ""), std::invalid_argument);
+	std::string nameSoBig(55, 'a');
+	ASSERT_THROW(Led l1(2, nameSoBig), std::invalid_argument);
 
 	Led device_sub2(5, "Blue light", "#2222222");
 	ASSERT_EQ("Blue light", device_sub2.getName());
@@ -172,6 +174,14 @@ TEST(LedDevice, getType)
 }
 
 
+TEST(LedDevice, getLastAccessed)
+{
+	// TODO: write suitable test
+	Led l1(3, "greenLed", "#1234567");
+	auto epoch = l1.getLastAccessed();
+}
+
+
 TEST(DeviceList, place)
 {
 	deviceList list;
@@ -198,6 +208,9 @@ TEST(DeviceList, place)
 
 	ASSERT_THROW(list.place(type, j1), std::runtime_error);
 	ASSERT_EQ(2, list.size());
+
+	deviceType uncompatibleType = deviceType::Base;
+	ASSERT_FALSE(list.place(uncompatibleType, j1));
 }
 
 
@@ -219,4 +232,20 @@ TEST(DeviceList, removeId)
 	auto id = all[0].first;
 	ASSERT_EQ(true, list.removeId(id));
 	ASSERT_EQ(0, list.size());
+
+	ASSERT_NE(true, list.removeId("1"));
+}
+
+
+TEST(DeviceList, sync)
+{
+	// TODO: write suitable test
+	deviceList list;
+	deviceType type = deviceType::Led;
+	json j1        = json::object();
+	j1["powerPin"] = 2;
+	j1["name"]     = "abc";
+
+	EXPECT_EQ(true, list.place(type, j1));
+	list.sync("db.json");
 }

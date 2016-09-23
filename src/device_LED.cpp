@@ -10,7 +10,7 @@ void Led::off()
 }
 
 
-auto Led::getLastAccessed() const
+long Led::getLastAccessed() const
 {
 	return lastAccess.time_since_epoch() / std::chrono::milliseconds(1);
 }
