@@ -9,10 +9,10 @@ using namespace isaac;
 const std::shared_ptr<spdlog::logger> deviceList::logger
   = spdlog::rotating_logger_mt("DL_Logger", "deviceListLogs", 1048576 * 5, 3);
 
-std::string deviceList::genId(const unsigned int num)
+std::string deviceList::genId(const unsigned int _len)
 {
 	std::string result;
-	result.reserve(num);
+	result.reserve(_len);
 
 	static constexpr char alphanum[] = "0123456789"
 	                                   "abcdefghijklmnopqrstuvwxyz"
@@ -22,7 +22,7 @@ std::string deviceList::genId(const unsigned int num)
 	static std::mt19937 gen(seed);
 	std::uniform_int_distribution<> dis(0, 61);
 
-	for (unsigned int i = 0; i < num; i++) {
+	for (unsigned int i = 0; i < _len; i++) {
 		result += alphanum[dis(gen)];
 	}
 	return result;
