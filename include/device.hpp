@@ -1,12 +1,13 @@
 #ifndef DEVICE_HPP
 #define DEVICE_HPP
 
-#include "gpio.hpp"
 #include <atomic>
 #include <mutex>
-#include <json.hpp>
 #include <memory>
+#include <json.hpp>
 #include <spdlog/spdlog.h>
+#include "gpio.hpp"
+#include "deviceType.hpp"
 
 namespace isaac {
 
@@ -15,13 +16,7 @@ using json = nlohmann::json;
 class Device {
 
 	unsigned int powerPin;
-	std::atomic<bool> failState;
-	std::atomic<bool> exported;
-
-	char id[9] = {'\0'};
-
-	// 0 => 'in' | 1 => 'out'
-	std::atomic<bool> pinIO;
+	char id[9] = { '\0' };
 
 	static const std::string GPIO_PATH;
 
@@ -31,7 +26,10 @@ class Device {
 
 	std::string name;
 	json description;
-	std::mutex m_meta;
+
+	std::mutex m_dir;
+	std::mutex m_name;
+	std::mutex m_desc;
 
 	void mount();
 	void unmount();
@@ -43,39 +41,38 @@ protected:
 	static const std::shared_ptr<spdlog::logger> logger;
 
 	// 0 => 'in' | 1 => 'out'
-	bool setDirection(bool);
-	bool readDirection();
+	void setDirection(bool);
+	bool getDirection() const;
+	unsigned int getPowerPin() const { return powerPin; }
 
 	// pinNumber and deviceName
 	Device(const unsigned int, const std::string = "", const std::string = "");
+	Device(const json _j, const std::string _id = "") : Device(_j["powerPin"], _j["name"], _id) {}
 
 public:
 	std::string getId() const { return id; }
-
-	bool hasFailed() const { return failState; }
-	bool isMounted() const { return exported; }
-	virtual bool isBad() const { return !isMounted() && hasFailed(); }
-
 	std::string getName() const { return name; }
 	json getDescription() const { return description; }
-	bool pinIOStatus() const { return pinIO; }
 
-	void setName(const std::string = "DEFAULT DEVICE NAME");
+	bool setName(const std::string = "DEFAULT DEVICE NAME");
 	void setDescription(const json = json::object());
+
+	virtual json dumpInfo() const;
+	virtual deviceType getType() const { return deviceType::Base; }
+
+	// both on() and off() calls are not thread safe
+	virtual void on();
+	virtual void off();
+
+	virtual bool read();
+	virtual bool execute() = 0;
+	virtual void process() = 0;
 
 	static bool isOccupied(const unsigned int _p)
 	{
 		return (_p > gpio::NumPins) ? false : occupied[_p];
 	}
-
 	static void configure() { logger->set_pattern(" %c - [%l][%t] \"%v\" "); }
-
-	virtual bool on();
-	virtual bool off();
-	virtual bool read();
-
-	virtual bool execute() = 0;
-	virtual void process() = 0;
 
 	virtual ~Device();
 };

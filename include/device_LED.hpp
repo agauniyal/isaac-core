@@ -15,16 +15,22 @@ private:
 	Led &operator=(const Led &) = delete;
 
 public:
-	Led(const unsigned int _p, const std::string _d = "", const std::string _id = "")
-	    : Device(_p, _d, _id), lastAccess(std::chrono::system_clock::now())
+	Led(const unsigned int _p, const std::string _n = "", const std::string _id = "")
+	    : Device(_p, _n, _id), lastAccess(std::chrono::system_clock::now())
 	{
-		// TODO: Log construction of LED here
+		logger->info("Led <{}> - pin <{}> constructed", getName(), getPowerPin());
 	}
-	bool isOn() { return read(); }
-	bool off() override;
+
+	Led(const json _j, const std::string _id = "") : Led(_j["powerPin"], _j["name"], _id) {}
+
+	void off() override;
+	auto isOn() { return read(); }
+	long getLastAccessed() const;
+	deviceType getType() const override { return deviceType::Led; }
+	json dumpInfo() const override;
+
 	bool execute() override { return true; }
 	void process() override {}
-	auto getLastAccessed() const { return lastAccess; }
 };
 }
 

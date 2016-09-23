@@ -1,12 +1,13 @@
-#include "deviceList.hpp"
-#include "device_LED.hpp"
 #include <algorithm>
 #include <random>
+#include <fstream>
+#include "deviceList.hpp"
+#include "device_LED.hpp"
 
 using namespace isaac;
-using deviceList::umap;
-using deviceList::arrIdName;
 
+const std::shared_ptr<spdlog::logger> deviceList::logger
+  = spdlog::rotating_logger_mt("DL_Logger", "deviceListLogs", 1048576 * 5, 3);
 
 std::string deviceList::genId(const unsigned int _len)
 {
@@ -17,7 +18,7 @@ std::string deviceList::genId(const unsigned int _len)
 	                                   "abcdefghijklmnopqrstuvwxyz"
 	                                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-	static const auto seed = std::random_device()();
+	const auto seed = std::random_device()();
 	static std::mt19937 gen(seed);
 	std::uniform_int_distribution<> dis(0, 61);
 
@@ -28,96 +29,68 @@ std::string deviceList::genId(const unsigned int _len)
 }
 
 
-bool deviceList::place(umap &_l, const unsigned int _p, const std::string _n)
+bool deviceList::place(deviceType _Type, const json _j)
 {
 	std::string id;
 	id.reserve(8);
 
 	do {
 		id = genId(8);
-	} while (_l.count(id) != 0);
+	} while (list.count(id) != 0);
 
-	auto res = _l.emplace(std::make_pair(id, std::make_unique<Led>(_p, _n, id)));
-	return res.second;
+	switch (_Type) {
+
+		case deviceType::Led: {
+
+			if (_j["powerPin"] == nullptr || _j["name"] == nullptr) {
+				logger->info("Bad args\n{}", _j.dump(4));
+				return false;
+			} else {
+				auto res = list.emplace(std::make_pair(id, std::make_unique<Led>(_j, id)));
+				logger->info("Device inserted\n{}", _j.dump(4));
+				return res.second;
+			}
+		}
+
+		default: return false;
+	}
 }
 
 
-arrIdName deviceList::getAll(const umap &_list)
+arrIdName deviceList::getAll() const
 {
 	arrIdName result;
-	for (auto &el : _list) {
+	for (auto &el : list) {
 		result.emplace_back(el.second->getId(), el.second->getName());
 	}
 	return result;
 }
 
 
-arrIdName deviceList::getFailed(const umap &_list)
+bool deviceList::removeId(const std::string _id)
 {
-	arrIdName result;
-	for (auto &el : _list) {
-		auto failed = el.second->hasFailed();
-		if (failed) {
-			result.emplace_back(el.second->getId(), el.second->getName());
-		}
-	}
-	return result;
-}
-
-
-arrIdName deviceList::getBad(const umap &_list)
-{
-	arrIdName result;
-	for (auto &el : _list) {
-		auto bad = el.second->isBad();
-		if (bad) {
-			result.emplace_back(el.second->getId(), el.second->getName());
-		}
-	}
-	return result;
-}
-
-
-arrIdName deviceList::getMounted(const umap &_list)
-{
-	arrIdName result;
-	for (auto &el : _list) {
-		auto mounted = el.second->isMounted();
-		if (mounted) {
-			result.emplace_back(el.second->getId(), el.second->getName());
-		}
-	}
-	return result;
-}
-
-
-arrIdName deviceList::getUnmounted(const umap &_list)
-{
-	arrIdName result;
-	for (auto &el : _list) {
-		auto mounted = el.second->isMounted();
-		if (!mounted) {
-			result.emplace_back(el.second->getId(), el.second->getName());
-		}
-	}
-	return result;
-}
-
-
-void deviceList::removeBad(umap &_list)
-{
-	for (auto it = _list.begin(); it != _list.end();) {
-		it = (it->second->isBad()) ? _list.erase(it) : ++it;
-	}
-}
-
-
-bool deviceList::removeId(umap &_list, const std::string _id)
-{
-	auto device = _list.find(_id);
-	if (device != _list.end()) {
-		device = _list.erase(device);
+	auto device = list.find(_id);
+	if (device != list.end()) {
+		device = list.erase(device);
+		logger->info("Device with id <{}> removed", _id);
 		return true;
 	}
+	logger->info("Device with id <{}> doesn't exist, not removed", _id);
 	return false;
+}
+
+
+void deviceList::sync(const std::string _f)
+{
+	std::ofstream db(_f.c_str(), std::ofstream::trunc);
+	if (db) {
+		json devices = json::array();
+		for (auto &el : list) {
+			auto device = el.second->dumpInfo();
+			devices.push_back(device);
+		}
+		db << devices.dump(4) << std::endl;
+	} else {
+		throw std::runtime_error("could not open db for sync");
+	}
 }

@@ -45,23 +45,49 @@ TEST(getGPIOBasePath, configFileNotPresent)
 
 TEST(StaticMethods, Device)
 {
+	Device::configure();
 	const unsigned pinNumber = 2;
 	ASSERT_FALSE(Device::isOccupied(pinNumber));
 
-	// now let's assign a device with pinNumber 2
 	{
-		Led someNewLed(pinNumber, "Red led");
+		Led someNewLed(pinNumber, "Red led", "#1231231");
 		ASSERT_TRUE(Device::isOccupied(pinNumber));
 	}
+
 	ASSERT_FALSE(Device::isOccupied(pinNumber));
 }
 
+
+TEST(Device, dumpInfo)
+{
+
+	Led device_sub1(5, "Blue light", "#2222222");
+	auto j_info = device_sub1.dumpInfo();
+
+	ASSERT_EQ("Blue light", j_info["name"]);
+	int pin = j_info["powerPin"];
+	ASSERT_EQ(5, pin);
+	ASSERT_EQ("#2222222", j_info["id"]);
+}
+
+
+TEST(Device, getType)
+{
+	std::unique_ptr<Device> d = std::make_unique<Led>(6, "Green Light", "#2222222");
+	deviceType type           = deviceType::Base;
+
+	ASSERT_EQ(type, d->Device::getType());
+}
+
+
 TEST(Device, Name)
 {
-	Led device_sub1(4);
-	ASSERT_EQ("DEFAULT DEVICE NAME", device_sub1.getName());
+	ASSERT_THROW(Led l1(2), std::invalid_argument);
+	ASSERT_THROW(Led l1(2, ""), std::invalid_argument);
+	std::string nameSoBig(55, 'a');
+	ASSERT_THROW(Led l1(2, nameSoBig), std::invalid_argument);
 
-	Led device_sub2(5, "Blue light");
+	Led device_sub2(5, "Blue light", "#2222222");
 	ASSERT_EQ("Blue light", device_sub2.getName());
 
 	std::string newName = "Green Light";
@@ -72,9 +98,29 @@ TEST(Device, Name)
 	ASSERT_EQ(newName, device_sub2.getName());
 }
 
+TEST(Device, Id)
+{
+
+	ASSERT_THROW(Led l1(2, "a", ""), std::invalid_argument);
+	ASSERT_THROW(Led l1(2, "a", "23424"), std::invalid_argument);
+	ASSERT_THROW(Led l1(2, "a", "ssdfqweqwexasda"), std::invalid_argument);
+
+	ASSERT_NO_THROW(Led l1(2, "a", "12345678"));
+
+	Led ll(5, "myName", "12345678");
+	ASSERT_EQ("12345678", ll.getId());
+
+	// By itself a device has no concept of unique Ids
+	// so more than 2 devices can exist with same Ids unless
+	// they're inside deviceList container
+
+	Led l1(3, "a", "12345678");
+	Led l2(4, "a", "12345678");
+}
+
 TEST(Device, Description)
 {
-	Led device_sub(6, "Green LED");
+	Led device_sub(6, "Green LED", "#1111111");
 	EXPECT_EQ("Green LED", device_sub.getName());
 
 	ASSERT_EQ("null", device_sub.getDescription().dump());
@@ -91,9 +137,12 @@ TEST(Device, Description)
 
 TEST(LedDevice, Constructor)
 {
-	Led led1(7, "MyLED");
-	EXPECT_FALSE(led1.hasFailed());
-	EXPECT_FALSE(led1.isBad());
+	ASSERT_THROW(Led l1(2), std::invalid_argument);
+	ASSERT_THROW(Led l1(2, ""), std::invalid_argument);
+	ASSERT_THROW(Led l1(2, "", ""), std::invalid_argument);
+	ASSERT_NO_THROW(Led l1(2, "abc", "12345678"));
+
+	Led led1(7, "MyLED", "#2222112");
 
 	// always returns true for LEDs
 	ASSERT_TRUE(led1.execute());
@@ -106,152 +155,97 @@ TEST(LedDevice, Constructor)
 
 TEST(LedDevice, OnOff)
 {
-	Led led1(8, "Booms");
-	EXPECT_FALSE(led1.isBad());
+	Led led1(8, "Voilet Led", "#3242441");
 
-	// now call on()
-	ASSERT_EQ(true, led1.on());
-	EXPECT_FALSE(led1.isBad());
+	led1.on();
+	ASSERT_EQ(true, led1.isOn());
 
-	// now call off()
-	ASSERT_EQ(true, led1.off());
-	EXPECT_FALSE(led1.isBad());
+	led1.off();
+	ASSERT_EQ(false, led1.isOn());
 }
 
-TEST(Brute, Lifecycle)
+
+TEST(LedDevice, getType)
 {
-	for (int i = 0; i < 100; ++i) {
-		{
-			Led led1(1, "MyLED");
-			Led led2(2, "MyLED");
-			Led led3(3, "MyLED");
-			Led led4(4, "MyLED");
-			Led led5(5, "MyLED");
+	std::unique_ptr<Device> d = std::make_unique<Led>(6, "Green Light", "#2222222");
+	deviceType type           = deviceType::Led;
 
-			EXPECT_TRUE(led1.on());
-			EXPECT_TRUE(led2.on());
-			EXPECT_TRUE(led3.on());
-			EXPECT_TRUE(led4.on());
-			EXPECT_TRUE(led5.on());
+	ASSERT_EQ(type, d->getType());
+}
 
-			EXPECT_TRUE(led1.off());
-			EXPECT_TRUE(led2.off());
-			EXPECT_TRUE(led3.off());
-			EXPECT_TRUE(led4.off());
-			EXPECT_TRUE(led5.off());
-		}
-	}
+
+TEST(LedDevice, getLastAccessed)
+{
+	// TODO: write suitable test
+	Led l1(3, "greenLed", "#1234567");
+	auto epoch = l1.getLastAccessed();
 }
 
 
 TEST(DeviceList, place)
 {
-	deviceList::umap list;
-	const bool a   = deviceList::place(list, 4, "LED4");
-	const bool b   = deviceList::place(list, 5, "Oops");
-	const bool c   = deviceList::place(list, 4, "OopsAgain");
-	bool allPlaced = a && b && c;
+	deviceList list;
+	deviceType type = deviceType::Led;
 
-	ASSERT_EQ(3, list.size());
-	ASSERT_EQ(true, allPlaced);
+	json j1 = json::object();
 
-	auto all = deviceList::getAll(list);
-	ASSERT_EQ(3, all.size());
+	j1["powerPin"] = nullptr;
+	j1["name"]     = nullptr;
+	ASSERT_FALSE(list.place(type, j1));
 
-	auto failed = deviceList::getFailed(list);
-	ASSERT_EQ(1, failed.size());
-}
+	j1["powerPin"] = 240;
+	j1["name"]     = "abc";
+	ASSERT_THROW(list.place(type, j1), std::invalid_argument);
 
+	j1["powerPin"] = 2;
+	ASSERT_EQ(true, list.place(type, j1));
+	ASSERT_EQ(1, list.size());
 
-TEST(DeviceList, getFailed)
-{
-	deviceList::umap list;
-	deviceList::place(list, 4, "LED4");
-	deviceList::place(list, 4, "Oops");
-	deviceList::place(list, 4, "OopsAgain");
+	j1["powerPin"] = 3;
+	j1["name"]     = "def";
+	ASSERT_EQ(true, list.place(type, j1));
+	ASSERT_EQ(2, list.size());
 
-	auto failed = deviceList::getFailed(list);
-	ASSERT_EQ(2, failed.size());
-}
+	ASSERT_THROW(list.place(type, j1), std::runtime_error);
+	ASSERT_EQ(2, list.size());
 
-TEST(DeviceList, getBad)
-{
-
-	deviceList::umap list;
-	deviceList::place(list, 4, "LED4");
-	deviceList::place(list, 4, "Oops");
-	deviceList::place(list, 4, "OopsAgain");
-
-	auto bad = deviceList::getBad(list);
-	ASSERT_EQ(2, bad.size());
-
-	// auto a = deviceList::removeId(list, idd);
-}
-
-TEST(DeviceList, getMounted)
-{
-	deviceList::umap list;
-	deviceList::place(list, 4, "LED4");
-	deviceList::place(list, 4, "Oops");
-	deviceList::place(list, 4, "OopsAgain");
-	deviceList::place(list, 7, "LED7");
-
-	auto mounted = deviceList::getMounted(list);
-	ASSERT_EQ(2, mounted.size());
-}
-
-
-TEST(DeviceList, getUnmounted)
-{
-	deviceList::umap list;
-	deviceList::place(list, 4, "LED4");
-	deviceList::place(list, 4, "Oops");
-	deviceList::place(list, 4, "OopsAgain");
-	deviceList::place(list, 7, "LED7");
-
-	auto unmounted = deviceList::getUnmounted(list);
-	ASSERT_EQ(2, unmounted.size());
-}
-
-
-TEST(DeviceList, removeBad)
-{
-	deviceList::umap list;
-	deviceList::place(list, 4, "LED4");
-	deviceList::place(list, 4, "Oops");
-	deviceList::place(list, 4, "OopsAgain");
-	deviceList::place(list, 7, "LED7");
-	deviceList::place(list, 70, "LED70??");
-
-	auto all = deviceList::getAll(list);
-	ASSERT_EQ(5, all.size());
-
-	deviceList::removeBad(list);
-
-	all = deviceList::getAll(list);
-	ASSERT_EQ(2, all.size());
+	deviceType uncompatibleType = deviceType::Base;
+	ASSERT_FALSE(list.place(uncompatibleType, j1));
 }
 
 
 TEST(DeviceList, removeId)
 {
-	deviceList::umap list;
-	deviceList::place(list, 4, "LED4");
-	deviceList::place(list, 4, "Oops");
-	deviceList::place(list, 6, "LED6");
+	deviceList list;
+	deviceType type = deviceType::Led;
 
-	auto all = deviceList::getAll(list);
-	ASSERT_EQ(3, all.size());
+	json j1        = json::object();
+	j1["powerPin"] = 2;
+	j1["name"]     = "abc";
 
-	auto bad = deviceList::getBad(list);
-	EXPECT_EQ(1, bad.size());
+	ASSERT_EQ(true, list.place(type, j1));
+	ASSERT_EQ(1, list.size());
 
-	auto removed = deviceList::removeId(list, bad[0].first);
-	EXPECT_EQ(true, removed);
+	auto all = list.getAll();
+	ASSERT_EQ(1, all.size());
 
-	removed = deviceList::removeId(list, bad[0].first);
-	EXPECT_EQ(false, removed);
+	auto id = all[0].first;
+	ASSERT_EQ(true, list.removeId(id));
+	ASSERT_EQ(0, list.size());
 
-	all = deviceList::getAll(list);
-	ASSERT_EQ(2, all.size());
+	ASSERT_NE(true, list.removeId("1"));
+}
+
+
+TEST(DeviceList, sync)
+{
+	// TODO: write suitable test
+	deviceList list;
+	deviceType type = deviceType::Led;
+	json j1        = json::object();
+	j1["powerPin"] = 2;
+	j1["name"]     = "abc";
+
+	EXPECT_EQ(true, list.place(type, j1));
+	list.sync("db.json");
 }
