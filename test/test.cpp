@@ -65,7 +65,8 @@ TEST(Device, dumpInfo)
 	auto j_info = device_sub1.dumpInfo();
 
 	ASSERT_EQ("Blue light", j_info["name"]);
-	ASSERT_EQ(5, j_info["powerPin"]);
+	int pin = j_info["powerPin"];
+	ASSERT_EQ(5, pin);
 	ASSERT_EQ("#2222222", j_info["id"]);
 }
 
