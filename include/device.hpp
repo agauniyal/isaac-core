@@ -6,7 +6,7 @@
 #include <memory>
 #include <json.hpp>
 #include <spdlog/spdlog.h>
-#include "gpio.hpp"
+#include "config.hpp"
 #include "deviceType.hpp"
 
 namespace isaac {
@@ -20,8 +20,8 @@ class Device {
 
 	static const std::string GPIO_PATH;
 
-	// make sure to guard against n > gpio::NumPins
-	static bool occupied[gpio::NumPins];
+	// make sure to guard against n > config::gpioNumPins
+	static bool occupied[config::gpioNumPins];
 	std::mutex m_occupied;
 
 	std::string name;
@@ -70,7 +70,7 @@ public:
 
 	static bool isOccupied(const unsigned int _p)
 	{
-		return (_p > gpio::NumPins) ? false : occupied[_p];
+		return (_p > config::gpioNumPins) ? false : occupied[_p];
 	}
 	static void configure() { logger->set_pattern(" %c - [%l][%t] \"%v\" "); }
 

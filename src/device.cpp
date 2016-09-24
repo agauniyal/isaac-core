@@ -4,16 +4,16 @@
 
 using namespace isaac;
 
-const std::string Device::GPIO_PATH  = gpio::getGPIOBasePath("config.json");
-bool Device::occupied[gpio::NumPins] = { 0 };
+const std::string Device::GPIO_PATH    = config::getGPIOBasePath();
+bool Device::occupied[config::gpioNumPins] = { 0 };
 
 const std::shared_ptr<spdlog::logger> Device::logger
-  = spdlog::rotating_logger_mt("D_Logger", "deviceLogs", 1048576 * 5, 3);
+  = spdlog::rotating_logger_mt("D_Logger", config::getLogPath() + "device", 1048576 * 5, 3);
 
 
 Device::Device(const unsigned int _p, const std::string _n, const std::string _id) : powerPin(_p)
 {
-	if (powerPin > gpio::NumPins) {
+	if (powerPin > config::gpioNumPins) {
 		logger->error("Pin <{}> is not valid", powerPin);
 		throw std::invalid_argument("pin number cannot exceed gpio::NumPins");
 	}
@@ -54,7 +54,7 @@ void Device::mount()
 {
 	std::string path;
 	path.reserve(25);
-	path.append(GPIO_PATH).append("/export");
+	path.append(GPIO_PATH).append("export");
 
 	std::ofstream gpioexport(path.c_str(), std::ofstream::trunc);
 	if (gpioexport) {
@@ -69,7 +69,7 @@ void Device::unmount()
 {
 	std::string path;
 	path.reserve(25);
-	path.append(GPIO_PATH).append("/unexport");
+	path.append(GPIO_PATH).append("unexport");
 
 	std::ofstream gpiounexport(path.c_str(), std::ofstream::trunc);
 	if (gpiounexport) {
@@ -87,7 +87,7 @@ void Device::setDirection(bool _dir)
 
 	std::string path;
 	path.reserve(40);
-	path.append(GPIO_PATH).append("/gpio").append(std::to_string(powerPin)).append("/direction");
+	path.append(GPIO_PATH).append("gpio").append(std::to_string(powerPin)).append("/direction");
 
 	std::ofstream dirStream(path.c_str(), std::ofstream::trunc);
 	if (dirStream) {
@@ -107,7 +107,7 @@ void Device::on()
 {
 	std::string path;
 	path.reserve(40);
-	path.append(GPIO_PATH).append("/gpio").append(std::to_string(powerPin)).append("/value");
+	path.append(GPIO_PATH).append("gpio").append(std::to_string(powerPin)).append("/value");
 
 	std::ofstream writeStream(path.c_str(), std::ofstream::trunc);
 	setDirection(1);
@@ -124,7 +124,7 @@ void Device::off()
 {
 	std::string path;
 	path.reserve(40);
-	path.append(GPIO_PATH).append("/gpio").append(std::to_string(powerPin)).append("/value");
+	path.append(GPIO_PATH).append("gpio").append(std::to_string(powerPin)).append("/value");
 
 	std::ofstream writeStream(path.c_str(), std::ofstream::trunc);
 	setDirection(1);
@@ -142,7 +142,7 @@ bool Device::read()
 {
 	std::string path;
 	path.reserve(40);
-	path.append(GPIO_PATH).append("/gpio").append(std::to_string(powerPin)).append("/value");
+	path.append(GPIO_PATH).append("gpio").append(std::to_string(powerPin)).append("/value");
 
 	std::ifstream readStream(path.c_str());
 	setDirection(0);

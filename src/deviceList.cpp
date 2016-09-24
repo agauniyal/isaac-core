@@ -6,8 +6,10 @@
 
 using namespace isaac;
 
+const std::string deviceList::JSONDB_PATH  = config::getJsonDBPath();
+
 const std::shared_ptr<spdlog::logger> deviceList::logger
-  = spdlog::rotating_logger_mt("DL_Logger", "deviceListLogs", 1048576 * 5, 3);
+  = spdlog::rotating_logger_mt("DL_Logger", config::getLogPath()+ "deviceList", 1048576 * 5, 3);
 
 std::string deviceList::genId(const unsigned int _len)
 {

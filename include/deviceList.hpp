@@ -22,6 +22,8 @@ class deviceList final {
 
 	static const std::shared_ptr<spdlog::logger> logger;
 
+	static const std::string JSONDB_PATH;
+
 	deviceList(const deviceList &) = delete;
 	deviceList &operator=(const deviceList &) = delete;
 

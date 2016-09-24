@@ -22,17 +22,22 @@ using namespace isaac;
 
 TEST(getGPIOBasePath, configFilePresent)
 {
+	auto defaultParamPath = config::getGPIOBasePath();
+	ASSERT_EQ("debug/raspi/path/", defaultParamPath);
+	ASSERT_NE("/sys/class/gpio/", defaultParamPath);
+
+
 	const auto file = "config2.json";
 	std::ofstream configFile(file, std::ofstream::trunc);
 	ASSERT_TRUE(configFile.is_open());
 	if (configFile) {
-		configFile << "{\"path\": \"path/for/testing\"}\n";
+		configFile << "{\"gpio_path\": \"path/for/testing/\"}\n";
 	}
 	configFile.close();
 
-	auto PathFromFile = gpio::getGPIOBasePath(file);
-	ASSERT_EQ("path/for/testing", PathFromFile);
-	ASSERT_NE("/sys/class/gpio", PathFromFile);
+	auto PathFromFile = config::getGPIOBasePath(file);
+	ASSERT_EQ("path/for/testing/", PathFromFile);
+	ASSERT_NE("/sys/class/gpio/", PathFromFile);
 
 	std::remove("config2.json");
 }
@@ -40,7 +45,7 @@ TEST(getGPIOBasePath, configFilePresent)
 TEST(getGPIOBasePath, configFileNotPresent)
 {
 	const auto file = "configNotFound.json";
-	ASSERT_THROW(gpio::getGPIOBasePath(file), std::runtime_error);
+	ASSERT_THROW(config::getGPIOBasePath(file), std::runtime_error);
 }
 
 TEST(StaticMethods, Device)
@@ -242,9 +247,9 @@ TEST(DeviceList, sync)
 	// TODO: write suitable test
 	deviceList list;
 	deviceType type = deviceType::Led;
-	json j1        = json::object();
-	j1["powerPin"] = 2;
-	j1["name"]     = "abc";
+	json j1         = json::object();
+	j1["powerPin"]  = 2;
+	j1["name"]      = "abc";
 
 	EXPECT_EQ(true, list.place(type, j1));
 	list.sync("db.json");
