@@ -31,6 +31,7 @@ endif
 subdir('src')
 subdir('app')
 subdir('test')
+subdir('benchmark')
 
 emulate_rasp = find_program('scripts/emulate_rasp.sh')
 run_target('emulate', command : emulate_rasp.path())
