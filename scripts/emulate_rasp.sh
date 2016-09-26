@@ -4,8 +4,8 @@ read -r -d '' CONFIG <<- EORULE
 {
     "db_path": "data/",
     "log_path": "logs/",
-    "gpio_path": "debug/raspi/path/"
-	"tempSensor_path": "debug/raspi/path/"
+    "gpio_path": "debug/raspi/path/",
+    "tempSensor_path": "debug/raspi/path/"
 }
 EORULE
 
