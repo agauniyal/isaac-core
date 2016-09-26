@@ -11,6 +11,8 @@ start-build:
           cat /proc/version
           cat /etc/*release
 
+
+
 build-gcc-default:
 
   steps:
@@ -38,7 +40,7 @@ build-gcc-default:
           g++ --version
 
     - script:
-        name: install meson & ninja dependencies
+        name: install meson and ninja dependencies
         code: |
           apt-get -y install git curl wget python3 python3-pip lcov cppcheck valgrind pkg-config
 
@@ -89,14 +91,6 @@ build-gcc-default:
           (ninja test && cat meson-logs/testlog.txt) || ./test/testexe
 
     - script:
-        name: valgrind
-        code: |
-          cd build
-          ninja test-valgrind || cat meson-logs/testlog-valgrind.txt
-          cat meson-logs/testlog-valgrind.txt
-
-
-    - script:
         name: run project
         code: |
           cd build
@@ -132,7 +126,7 @@ build-gcc-5:
           update-alternatives --config g++
 
     - script:
-        name: install meson & ninja dependencies
+        name: install meson and ninja dependencies
         code: |
           apt-get -y install git curl wget python3 python3-pip lcov cppcheck valgrind pkg-config
 
@@ -181,13 +175,6 @@ build-gcc-5:
         code: |
           cd build
           (ninja test && cat meson-logs/testlog.txt) || ./test/testexe
-
-    - script:
-        name: valgrind
-        code: |
-          cd build
-          ninja test-valgrind || cat meson-logs/testlog-valgrind.txt
-          cat meson-logs/testlog-valgrind.txt
 
     - script:
         name: run project
@@ -278,13 +265,6 @@ build-gcc-6:
           (ninja test && cat meson-logs/testlog.txt) || ./test/testexe
 
     - script:
-        name: valgrind
-        code: |
-          cd build
-          ninja test-valgrind || cat meson-logs/testlog-valgrind.txt
-          cat meson-logs/testlog-valgrind.txt
-
-    - script:
         name: run project
         code: |
           cd build
@@ -327,7 +307,7 @@ build-clang-default:
           clang++ --version
 
     - script:
-        name: install meson & ninja dependencies
+        name: install meson and ninja dependencies
         code: |
           apt-get -y install git curl wget python3 python3-pip lcov cppcheck valgrind pkg-config
 
@@ -383,11 +363,115 @@ build-clang-default:
           (ninja test && cat meson-logs/testlog.txt) || ./test/testexe
 
     - script:
-        name: valgrind
+        name: run project
         code: |
           cd build
-          ninja test-valgrind || cat meson-logs/testlog-valgrind.txt
-          cat meson-logs/testlog-valgrind.txt
+          timeout 5 ./app/isaac-app || true
+
+
+
+valgrind-gcc6:
+
+  steps:
+
+    - script:
+        name: update system
+        code: |
+          export DEBIAN_FRONTEND=noninteractive
+          export LANGUAGE=en_US.UTF-8
+          export LANG=en_US.UTF-8
+          export LC_ALL=en_US.UTF-8
+          locale-gen en_US.UTF-8
+          dpkg-reconfigure locales
+          apt-get -yq update && apt-get -yq upgrade
+          apt-get install -yq software-properties-common
+          add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          apt-get -y update && apt-get -y upgrade
+
+    - script:
+        name: install gcc 6
+        code: |
+          apt-get -y install gcc-6 g++-6
+          update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 100
+          update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100
+          apt-get -y install build-essential
+          update-alternatives --config gcc
+          update-alternatives --config g++
+
+    - script:
+        name: echo gcc version
+        code: |
+          gcc --version
+          g++ --version
+
+    - script:
+        name: install dependencies
+        code: |
+          apt-get -y install git curl wget python3 python3-pip lcov cppcheck valgrind pkg-config
+          apt-get -y install libgtest-dev zlib1g-dev openssl libssl-dev libuv1-dev
+
+    - script:
+        name: install ninja build
+        code: |
+          git clone git://github.com/ninja-build/ninja.git && cd ninja
+          git checkout release
+          python3 ./configure.py --bootstrap
+          cp ninja /usr/bin/ninja
+          cd ../
+          rm -rf ninja/
+
+    - script:
+        name: install meson
+        code: |
+          pip3 install meson
+          ln -s /usr/local/bin/meson.py /usr/bin/meson
+
+    - script:
+        name: echo meson and ninja versions
+        code: |
+          meson --version
+          ninja --version
+
+    - script:
+        name: build project
+        code: |
+          mkdir build && cd build
+          meson.py .. -Db_coverage=true
+          ninja
+
+    - script:
+        name: emulate rasp gpio
+        code: |
+          cd build
+          ninja emulate
+
+    - script:
+        name: test project
+        code: |
+          cd build
+          (ninja test && cat meson-logs/testlog.txt) || ./test/testexe
+
+    - script:
+        name: build valgrind
+        code: |
+          cd build
+          apt-get -y install subversion autotools-dev automake
+          apt-get -y remove valgrind
+          svn co svn://svn.valgrind.org/valgrind/trunk valgrind
+          cd valgrind
+          ./autogen.sh
+          ./configure
+          make
+          make install
+          cd ..
+          rm -rf valgrind/
+          valgrind --version
+
+     - script:
+        name: test valgrind
+        code: |
+          cd build
+          valgrind ./test/testexe
 
     - script:
         name: run project

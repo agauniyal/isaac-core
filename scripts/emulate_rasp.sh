@@ -1,6 +1,6 @@
 #!/bin/sh
 
-read -r -d '' CONFIG <<- EORULE
+CONFIG=$(cat <<- EORULE
 {
     "db_path": "data/",
     "log_path": "logs/",
@@ -8,6 +8,7 @@ read -r -d '' CONFIG <<- EORULE
     "tempSensor_path": "debug/raspi/path/"
 }
 EORULE
+)
 
 emulateGpio(){
 	mkdir -p app/debug/raspi/path/gpio$1
