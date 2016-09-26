@@ -10,6 +10,7 @@ namespace config {
 	std::string getGPIOBasePath(const std::string = "config.json");
 	std::string getJsonDBPath(const std::string = "config.json");
 	std::string getLogPath(const std::string = "config.json");
+	std::string getTempSensor(const std::string = "config.json");
 }
 }
 

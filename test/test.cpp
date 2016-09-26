@@ -252,5 +252,5 @@ TEST(DeviceList, sync)
 	j1["name"]      = "abc";
 
 	EXPECT_EQ(true, list.place(type, j1));
-	list.sync("db.json");
+	list.sync();
 }

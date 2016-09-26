@@ -33,7 +33,7 @@ public:
 
 	bool place(deviceType, const json = json::object());
 	bool removeId(const std::string);
-	void sync(const std::string = "db.json");
+	void sync(const bool = 1, const std::string = JSONDB_PATH + "db.json");
 
 	auto size() const { return list.size(); }
 	auto empty() const { return list.empty(); }

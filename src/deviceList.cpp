@@ -1,15 +1,16 @@
 #include <algorithm>
 #include <random>
+#include <sstream>
 #include <fstream>
 #include "deviceList.hpp"
 #include "device_LED.hpp"
 
 using namespace isaac;
 
-const std::string deviceList::JSONDB_PATH  = config::getJsonDBPath();
+const std::string deviceList::JSONDB_PATH = config::getJsonDBPath();
 
 const std::shared_ptr<spdlog::logger> deviceList::logger
-  = spdlog::rotating_logger_mt("DL_Logger", config::getLogPath()+ "deviceList", 1048576 * 5, 3);
+  = spdlog::rotating_logger_mt("DL_Logger", config::getLogPath() + "deviceList", 1048576 * 5, 3);
 
 std::string deviceList::genId(const unsigned int _len)
 {
@@ -82,17 +83,33 @@ bool deviceList::removeId(const std::string _id)
 }
 
 
-void deviceList::sync(const std::string _f)
+void deviceList::sync(const bool memToDisk, const std::string _f)
 {
-	std::ofstream db(_f.c_str(), std::ofstream::trunc);
-	if (db) {
-		json devices = json::array();
-		for (auto &el : list) {
-			auto device = el.second->dumpInfo();
-			devices.push_back(device);
+	if (memToDisk) {
+		std::ofstream db(_f.c_str(), std::ofstream::trunc);
+		if (db) {
+			json devices = json::array();
+			for (auto &el : list) {
+				auto device = el.second->dumpInfo();
+				devices.push_back(device);
+			}
+			db << devices.dump(4) << std::endl;
+		} else {
+			throw std::runtime_error("could not open db for sync");
 		}
-		db << devices.dump(4) << std::endl;
 	} else {
-		throw std::runtime_error("could not open db for sync");
+		std::ifstream db(_f.c_str());
+		if (db) {
+			std::stringstream buffer;
+			buffer << db.rdbuf();
+			auto devices = json::parse(buffer);
+
+			for(auto &device: devices){
+				// TODO: parse over devices
+			}
+
+		} else {
+			throw std::runtime_error("could not open db for sync");
+		}
 	}
 }
