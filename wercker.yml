@@ -368,8 +368,6 @@ build-clang-default:
           cd build
           timeout 5 ./app/isaac-app || true
 
-
-
 valgrind-gcc6:
 
   steps:
@@ -467,7 +465,7 @@ valgrind-gcc6:
           rm -rf valgrind/
           valgrind --version
 
-     - script:
+    - script:
         name: test valgrind
         code: |
           cd build
