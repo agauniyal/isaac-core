@@ -5,20 +5,18 @@ using namespace isaac;
 void Led::off()
 {
 	std::lock_guard<std::mutex> lock(m_lastAccess);
-	lastAccess = std::chrono::system_clock::now();
+	lastAccess = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 	Device::off();
 }
 
 
-long Led::getLastAccessed() const
-{
-	return lastAccess.time_since_epoch() / std::chrono::milliseconds(1);
-}
+long Led::getLastAccessed() const { return lastAccess; }
 
 
 json Led::dumpInfo() const
 {
 	auto j          = Device::dumpInfo();
-	j["lastAccess"] = lastAccess.time_since_epoch() / std::chrono::milliseconds(1);
+	j["lastAccess"] = lastAccess;
+	j["type"]       = dToInt(deviceType::Led);
 	return j;
 }

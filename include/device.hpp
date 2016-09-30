@@ -65,8 +65,6 @@ public:
 	virtual void off();
 
 	virtual bool read();
-	virtual bool execute() = 0;
-	virtual void process() = 0;
 
 	static bool isOccupied(const unsigned int _p)
 	{

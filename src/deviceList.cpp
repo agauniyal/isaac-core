@@ -104,8 +104,9 @@ void deviceList::sync(const bool memToDisk, const std::string _f)
 			buffer << db.rdbuf();
 			auto devices = json::parse(buffer);
 
-			for(auto &device: devices){
-				// TODO: parse over devices
+			for(auto &d: devices){
+				auto type = intToD(d["type"]);
+				auto result = place(type, d);
 			}
 
 		} else {

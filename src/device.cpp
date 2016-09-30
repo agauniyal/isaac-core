@@ -4,8 +4,8 @@
 
 using namespace isaac;
 
-const std::string Device::GPIO_PATH    = config::getGPIOBasePath();
 bool Device::occupied[config::gpioNumPins] = { 0 };
+const std::string Device::GPIO_PATH        = config::getGPIOBasePath();
 
 const std::shared_ptr<spdlog::logger> Device::logger
   = spdlog::rotating_logger_mt("D_Logger", config::getLogPath() + "device", 1048576 * 5, 3);
@@ -36,7 +36,8 @@ Device::Device(const unsigned int _p, const std::string _n, const std::string _i
 		if (!occupied[powerPin]) {
 			occupied[powerPin] = true;
 		} else {
-			logger->info("Device <{}> - pin <{}> cannot be created, pin already occupied", name, powerPin);
+			logger->info(
+			  "Device <{}> - pin <{}> cannot be created, pin already occupied", name, powerPin);
 			throw std::runtime_error("pin already occupied");
 		}
 	}
@@ -173,12 +174,12 @@ bool Device::setName(const std::string _n)
 }
 
 
-void Device::setDescription(const json _i)
+void Device::setDescription(const json _j)
 {
 	const auto oldDesc = description;
 	{
 		std::lock_guard<std::mutex> lock(m_desc);
-		description = _i;
+		description = _j;
 	}
 	logger->info("Device <{}>:\n{}\nchanged to\n{}", name, oldDesc.dump(4), description.dump(4));
 }
@@ -191,6 +192,7 @@ json Device::dumpInfo() const
 	info["id"]          = id;
 	info["name"]        = name;
 	info["description"] = description;
+	info["type"]        = dToInt(deviceType::Base);
 	return info;
 }
 

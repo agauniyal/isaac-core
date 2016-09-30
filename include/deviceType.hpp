@@ -2,8 +2,10 @@
 
 namespace isaac {
 enum class deviceType { Base, Led };
-template <typename T> constexpr auto to_int(T t) -> typename std::underlying_type<T>::type
+
+template <typename E> constexpr auto dToInt(E e) noexcept
 {
-	return static_cast<typename std::underlying_type<T>::type>(t);
+	return static_cast<std::underlying_type_t<E>>(e);
 }
+constexpr deviceType intToD(int i) noexcept { return static_cast<deviceType>(i); }
 }

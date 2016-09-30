@@ -148,14 +148,7 @@ TEST(LedDevice, Constructor)
 	ASSERT_NO_THROW(Led l1(2, "abc", "12345678"));
 
 	Led led1(7, "MyLED", "#2222112");
-
-	// always returns true for LEDs
-	ASSERT_TRUE(led1.execute());
-
 	EXPECT_FALSE(led1.isOn());
-
-	// Empty method for now
-	led1.process();
 }
 
 TEST(LedDevice, OnOff)
