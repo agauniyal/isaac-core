@@ -1,13 +1,13 @@
 #ifndef DEVICE_HPP
 #define DEVICE_HPP
 
-#include <atomic>
-#include <mutex>
-#include <memory>
-#include <json.hpp>
-#include <spdlog/spdlog.h>
 #include "config.hpp"
 #include "deviceType.hpp"
+#include <atomic>
+#include <json.hpp>
+#include <memory>
+#include <mutex>
+#include <spdlog/spdlog.h>
 
 namespace isaac {
 
@@ -16,7 +16,7 @@ using json = nlohmann::json;
 class Device {
 
 	unsigned int powerPin;
-	char id[9] = { '\0' };
+	char id[9] = {};
 
 	static const std::string GPIO_PATH;
 
@@ -47,7 +47,6 @@ protected:
 
 	// pinNumber and deviceName
 	Device(const unsigned int, const std::string = "", const std::string = "");
-	Device(const json _j, const std::string _id = "") : Device(_j["powerPin"], _j["name"], _id) {}
 
 public:
 	std::string getId() const { return id; }

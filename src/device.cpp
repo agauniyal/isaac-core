@@ -1,6 +1,6 @@
 #include "device.hpp"
-#include <fstream>
 #include <algorithm>
+#include <fstream>
 
 using namespace isaac;
 
@@ -47,6 +47,7 @@ Device::Device(const unsigned int _p, const std::string _n, const std::string _i
 		logger->info("Device <{}> with pin <{}> mounted", name, powerPin);
 	} catch (std::runtime_error &e) {
 		logger->error("Device <{}> - pin <{}> could not be created\n{}", name, powerPin, e.what());
+		throw std::runtime_error("Error: Device cannot be created");
 	}
 }
 

@@ -1,5 +1,5 @@
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
 #include <string>
 

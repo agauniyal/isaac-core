@@ -1,16 +1,16 @@
+#include "deviceList.hpp"
+#include "device_Led.hpp"
 #include <algorithm>
+#include <fstream>
 #include <random>
 #include <sstream>
-#include <fstream>
-#include "deviceList.hpp"
-#include "device_LED.hpp"
 
 using namespace isaac;
 
 const std::string deviceList::JSONDB_PATH = config::getJsonDBPath();
-
 const std::shared_ptr<spdlog::logger> deviceList::logger
   = spdlog::rotating_logger_mt("DL_Logger", config::getLogPath() + "deviceList", 1048576 * 5, 3);
+
 
 std::string deviceList::genId(const unsigned int _len)
 {
@@ -44,17 +44,15 @@ bool deviceList::place(deviceType _Type, const json _j)
 	switch (_Type) {
 
 		case deviceType::Led: {
-
-			if (_j["powerPin"] == nullptr || _j["name"] == nullptr) {
-				logger->info("Bad args\n{}", _j.dump(4));
-				return false;
-			} else {
+			try {
 				auto res = list.emplace(std::make_pair(id, std::make_unique<Led>(_j, id)));
 				logger->info("Device inserted\n{}", _j.dump(4));
 				return res.second;
+			} catch (const std::exception &e) {
+				logger->info(e.what());
+				return false;
 			}
 		}
-
 		default: return false;
 	}
 }
@@ -104,8 +102,8 @@ void deviceList::sync(const bool memToDisk, const std::string _f)
 			buffer << db.rdbuf();
 			auto devices = json::parse(buffer);
 
-			for(auto &d: devices){
-				auto type = intToD(d["type"]);
+			for (auto &d : devices) {
+				auto type   = intToD(d["type"]);
 				auto result = place(type, d);
 			}
 
