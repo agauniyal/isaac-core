@@ -4,7 +4,7 @@
 
 using namespace isaac;
 
-bool Device::occupied[config::gpioNumPins] = { 0 };//fill occupied pins 0 for usable 0th value 1 as 0 doesnt exist in rasp pi
+bool Device::occupied[config::gpioNumPins] = { 1,1,1,1,1,1,1,0,1,1,1,0,0,0,1,0,0,1,0,1,1,1,0,1,1,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0 };//fill occupied pins ,0 for usable 0th value 1 as 0 doesnt exist in rasp pi
 const std::string Device::GPIO_PATH        = config::getGPIOBasePath();
 
 const std::shared_ptr<spdlog::logger> Device::logger

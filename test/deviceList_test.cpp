@@ -18,11 +18,11 @@ TEST(DeviceList, place)
 	ASSERT_FALSE(list.place(type, j1));
 
 	j1["name"]     = "abc";
-	j1["powerPin"] = 2;
+	j1["powerPin"] = 7;
 	ASSERT_EQ(true, list.place(type, j1));
 	ASSERT_EQ(1, list.size());
 
-	j1["powerPin"] = 3;
+	j1["powerPin"] = 11;
 	j1["name"]     = "def";
 	ASSERT_EQ(true, list.place(type, j1));
 	ASSERT_EQ(2, list.size());
@@ -43,7 +43,7 @@ TEST(DeviceList, removeId)
 	deviceType type = deviceType::Led;
 
 	json j1        = json::object();
-	j1["powerPin"] = 2;
+	j1["powerPin"] = 7;
 	j1["name"]     = "abc";
 
 	ASSERT_EQ(true, list.place(type, j1));
@@ -66,7 +66,7 @@ TEST(DeviceList, sync)
 	deviceList list;
 	deviceType type = deviceType::Led;
 	json j1         = json::object();
-	j1["powerPin"]  = 2;
+	j1["powerPin"]  = 7;
 	j1["name"]      = "abc";
 
 	EXPECT_EQ(true, list.place(type, j1));
@@ -80,11 +80,11 @@ TEST(DeviceList, proxyMethods)
 	deviceType type = deviceType::Led;
 	json j1         = json::object();
 
-	j1["powerPin"] = 2;
+	j1["powerPin"] = 7;
 	j1["name"]     = "abc";
 	EXPECT_EQ(true, list.place(type, j1));
 
-	j1["powerPin"] = 3;
+	j1["powerPin"] = 11;
 	j1["name"]     = "def";
 	EXPECT_EQ(true, list.place(type, j1));
 
