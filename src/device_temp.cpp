@@ -1,7 +1,7 @@
 #include "device_temp.hpp" 
 using namespace isaac;
 const std::string Temp::TEMPSEN_PATH
-  = config::getTempSensor();  // get path=/sys/bus/w1/devices
+  = config::getTempSensor(); 
 char c;
 
 int Temp::getTemperature()
@@ -12,11 +12,11 @@ int Temp::getTemperature()
 
 	std::string path;
 	path.reserve(40);
-	path.append(TEMPSEN_PATH).append("/").append(folderName).append("/w1_slave");
+	path.append(TEMPSEN_PATH).append(folderName).append("/w1_slave");
 
 	std::ifstream readStream(path);
 	if (readStream.fail()) return -460;
-
+	readStream.seekg(1, std::ios::end);
 	std::streampos size = readStream.tellg();
 	for (int i = 1; i <= size; ++i)
 		{
