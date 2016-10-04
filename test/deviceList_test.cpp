@@ -60,7 +60,7 @@ TEST(DeviceList, removeId)
 }
 
 
-TEST(DeviceList, sync)
+TEST(DeviceList, syncmemtodisk)
 {
 	// TODO: write suitable test
 	deviceList list;
@@ -70,7 +70,37 @@ TEST(DeviceList, sync)
 	j1["name"]      = "abc";
 
 	EXPECT_EQ(true, list.place(type, j1));
-	list.sync();
+	ASSERT_THROW(list.sync(1, "abc/bcd.json"), std::runtime_error);
+	ASSERT_THROW(list.sync(0, "abc/bcd.json"), std::runtime_error);
+	list.place(type, j1);
+	list.sync(1, "db1.json");
+	std::ifstream db("db1.json");
+	if (db) {
+		std::stringstream buffer;
+		buffer << db.rdbuf();
+		auto json_db = json::parse(buffer);
+		int a        = json_db[0].at("powerPin");
+		ASSERT_EQ(7, a);
+	} else {
+		ASSERT_EQ(1, 2);
+	}
+}
+TEST(DeviceList, syncdisktomem)
+{
+	deviceType type = deviceType::Led;
+	json j2arr      = json::array();
+	json j2         = json::object();
+	j2["powerPin"]  = 11;
+	j2["name"]      = "bcd";
+	j2["type"]      = dToInt(type);
+	j2arr.push_back(j2);
+
+	std::ofstream newdb("newdb.json");
+	newdb << j2arr.dump(4);
+	newdb.close();
+	deviceList list2;
+	list2.sync(0, "newdb.json");
+	ASSERT_EQ(1, list2.size());
 }
 
 
@@ -91,7 +121,7 @@ TEST(DeviceList, proxyMethods)
 	ASSERT_EQ(2, list.size());
 	ASSERT_LT(1, list.max_size());
 	ASSERT_FALSE(list.empty());
-
+	ASSERT_EQ(0, list.count("aaaaaaaaa"));
 	list.clear();
 	ASSERT_TRUE(list.empty());
 }

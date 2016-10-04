@@ -113,3 +113,12 @@ TEST(Device, Description)
 	device_sub.setDescription(modifyDescription);
 	ASSERT_EQ(modifyDescription, device_sub.getDescription());
 }
+
+
+TEST(Device, Exception)
+{
+	ASSERT_THROW(Led l1(42, "a", "12345678"), std::invalid_argument);
+	std::string s(60, 'a');
+	ASSERT_THROW(Led l1(7, s, "12345678"), std::invalid_argument);
+	ASSERT_THROW(Led l1(8, "a", "12345678"), std::runtime_error);
+}
