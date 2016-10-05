@@ -36,7 +36,7 @@ TEST(TemperatureSensorDevice, getTemperatureMultiThread)
 	start = std::chrono::system_clock::now();
 
 	for (int i = 0; i < 10; ++i) {
-		futures.push_back(std::async([&]() { return t1.getTemperature(); }));
+		futures.push_back(std::async(std::launch::async, [&]() { return t1.getTemperature(); }));
 	}
 	for (auto &result : futures) {
 		auto r = result.get();
