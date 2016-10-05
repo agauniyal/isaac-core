@@ -10,19 +10,26 @@ using namespace isaac;
 
 TEST(TemperatureSensorDevice, Constructor)
 {
-	ASSERT_THROW(Temp t1(7), std::invalid_argument);
-	ASSERT_THROW(Temp t1(7, ""), std::invalid_argument);
-	ASSERT_THROW(Temp t1(7, "", ""), std::invalid_argument);
-	ASSERT_THROW(Temp t1(7, "", "", ""), std::invalid_argument);
+	ASSERT_THROW(TempSensor t1(7), std::invalid_argument);
+	ASSERT_THROW(TempSensor t1(7, ""), std::invalid_argument);
+	ASSERT_THROW(TempSensor t1(7, "", ""), std::invalid_argument);
+	ASSERT_THROW(TempSensor t1(7, "", "", ""), std::invalid_argument);
 
-	ASSERT_NO_THROW(Temp t1(7, "abc", "12345678", "tempSensor"));
-	ASSERT_NO_THROW(Temp t1(7, "abc", "12345678", "tempSensor", 1000));
+	ASSERT_NO_THROW(TempSensor t1(7, "abc", "12345678", "tempSensor"));
+	ASSERT_NO_THROW(TempSensor t1(7, "abc", "12345678", "tempSensor", 1000));
 }
+
 
 TEST(TemperatureSensorDevice, getTemperature)
 {
-	Temp t1(7, "#123123", "12345678", "tempSensor", 1000);
+	TempSensor t1(7, "#123123", "12345678", "tempSensor");
 	ASSERT_EQ(12345, t1.getTemperature());
+}
+
+
+TEST(TemperatureSensorDevice, getTemperatureMultiThread)
+{
+	TempSensor t1(7, "#123123", "12345678", "tempSensor", 1000);
 
 	std::vector<std::future<int>> futures;
 	std::chrono::time_point<std::chrono::system_clock> start, end;

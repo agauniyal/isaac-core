@@ -6,7 +6,7 @@
 #include <fstream>
 
 namespace isaac {
-class Temp final : public Device {
+class TempSensor final : public Device {
 
 private:
 	int currTemperature;
@@ -16,15 +16,15 @@ private:
 	static const std::string TEMPSEN_PATH;
 	std::chrono::milliseconds::rep delayTime;
 
-	Temp(const Temp &) = delete;
-	Temp &operator=(const Temp &) = delete;
+	TempSensor(const TempSensor &) = delete;
+	TempSensor &operator=(const TempSensor &) = delete;
 
 public:
-	Temp(const unsigned int, const std::string = "", const std::string = "", const std::string = "",
-	  std::chrono::milliseconds::rep = 0);
+	TempSensor(const unsigned int, const std::string = "", const std::string = "",
+	  const std::string = "", std::chrono::milliseconds::rep = 0);
 
-	Temp(const json _j, const std::string _id = "")
-	    : Temp(_j["powerPin"], _j["name"], _id, _j["folderName"], _j["delayTime"])
+	TempSensor(const json _j, const std::string _id = "")
+	    : TempSensor(_j["powerPin"], _j["name"], _id, _j["folderName"], _j["delayTime"])
 	{
 	}
 
@@ -32,6 +32,7 @@ public:
 
 	deviceType getType() const override { return deviceType::TempSensor; }
 	auto getDelay() const { return delayTime; }
+	json dumpInfo() const override;
 };
 }
 

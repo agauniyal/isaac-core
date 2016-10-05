@@ -1,10 +1,10 @@
 #include "device_Temperature.hpp"
 
 using namespace isaac;
-const std::string Temp::TEMPSEN_PATH = config::getTempSensor();
+const std::string TempSensor::TEMPSEN_PATH = config::getTempSensor();
 
 
-Temp::Temp(const unsigned int _p, const std::string _n, const std::string _id,
+TempSensor::TempSensor(const unsigned int _p, const std::string _n, const std::string _id,
   const std::string folder, std::chrono::milliseconds::rep _d)
     : Device(_p, _n, _id), folderName(folder), delayTime(_d)
 {
@@ -32,7 +32,7 @@ Temp::Temp(const unsigned int _p, const std::string _n, const std::string _id,
 }
 
 
-int Temp::getTemperature()
+int TempSensor::getTemperature()
 {
 	{
 		std::lock_guard<std::mutex> lock(m_getTemp);
@@ -65,4 +65,14 @@ int Temp::getTemperature()
 	std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 	busy = false;
 	return currTemperature;
+}
+
+
+json TempSensor::dumpInfo() const
+{
+	auto j          = Device::dumpInfo();
+	j["delayTime"]  = delayTime;
+	j["folderName"] = folderName;
+	j["type"]       = dToInt(deviceType::TempSensor);
+	return j;
 }
