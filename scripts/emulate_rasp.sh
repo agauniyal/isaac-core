@@ -10,12 +10,22 @@ CONFIG=$(cat <<- EORULE
 EORULE
 )
 
+TEMPERATURE=$(cat <<- EORULE
+ab cd ef gh ab cd ef gh 12 : crc=12 YES
+ab cd ef gh ab cd ef gh 12 t=12345
+EORULE
+)
+
 emulateGpio(){
 	mkdir -p app/debug/raspi/path/gpio$1
 	touch app/debug/raspi/path/gpio$1/direction
 	touch app/debug/raspi/path/gpio$1/value
 	touch app/debug/raspi/path/export
 	touch app/debug/raspi/path/unexport
+
+	mkdir -p app/debug/raspi/path/tempSensor
+	touch app/debug/raspi/path/tempSensor/w1_slave
+	echo "$TEMPERATURE" > app/debug/raspi/path/tempSensor/w1_slave
 
 	touch app/config.json
 	echo "$CONFIG" > app/config.json
@@ -29,6 +39,11 @@ emulateGpio(){
 	touch test/debug/raspi/path/gpio$1/value
 	touch test/debug/raspi/path/export
 	touch test/debug/raspi/path/unexport
+
+	mkdir -p test/debug/raspi/path/tempSensor
+	touch test/debug/raspi/path/tempSensor/w1_slave
+	echo "$TEMPERATURE" > test/debug/raspi/path/tempSensor/w1_slave
+
 	touch test/config.json
 	echo "$CONFIG" > test/config.json
 
@@ -41,6 +56,10 @@ emulateGpio(){
 	touch debug/raspi/path/gpio$1/value
 	touch debug/raspi/path/export
 	touch debug/raspi/path/unexport
+
+	mkdir -p debug/raspi/path/tempSensor
+	touch debug/raspi/path/tempSensor/w1_slave
+	echo "$TEMPERATURE" > debug/raspi/path/tempSensor/w1_slave
 
 	touch config.json
 	echo "$CONFIG" > config.json

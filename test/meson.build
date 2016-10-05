@@ -1,4 +1,5 @@
-test_sources = ['device_test.cpp', 'device_Led_test.cpp', 'config_test.cpp', 'deviceList_test.cpp']
+test_sources = ['device_test.cpp', 'device_Led_test.cpp', 'config_test.cpp',
+				'deviceList_test.cpp','device_Temperature_test.cpp']
 
 testexe = executable('testexe', test_sources,
         include_directories : inc, link_with : corelib,

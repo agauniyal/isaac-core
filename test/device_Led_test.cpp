@@ -8,10 +8,10 @@ using namespace isaac;
 
 TEST(LedDevice, Constructor)
 {
-	ASSERT_THROW(Led l1(2), std::invalid_argument);
-	ASSERT_THROW(Led l1(2, ""), std::invalid_argument);
-	ASSERT_THROW(Led l1(2, "", ""), std::invalid_argument);
-	ASSERT_NO_THROW(Led l1(2, "abc", "12345678"));
+	ASSERT_THROW(Led l1(7), std::invalid_argument);
+	ASSERT_THROW(Led l1(7, ""), std::invalid_argument);
+	ASSERT_THROW(Led l1(7, "", ""), std::invalid_argument);
+	ASSERT_NO_THROW(Led l1(7, "abc", "12345678"));
 
 	Led led1(7, "MyLED", "#2222112");
 	EXPECT_FALSE(led1.isOn());
@@ -20,7 +20,7 @@ TEST(LedDevice, Constructor)
 
 TEST(LedDevice, OnOff)
 {
-	Led led1(8, "Voilet Led", "#3242441");
+	Led led1(11, "Voilet Led", "#3242441");
 
 	led1.on();
 	ASSERT_EQ(true, led1.isOn());
@@ -32,7 +32,7 @@ TEST(LedDevice, OnOff)
 
 TEST(LedDevice, getType)
 {
-	std::unique_ptr<Device> d = std::make_unique<Led>(6, "Green Light", "#2222222");
+	std::unique_ptr<Device> d = std::make_unique<Led>(15, "Green Light", "#2222222");
 	deviceType type           = deviceType::Led;
 
 	ASSERT_EQ(type, d->getType());
@@ -43,7 +43,7 @@ TEST(LedDevice, getLastAccessed)
 {
 	using namespace std::chrono;
 
-	Led l1(3, "greenLed", "#1234567");
+	Led l1(11, "greenLed", "#1234567");
 	auto epoch = l1.getLastAccessed();
 
 	std::this_thread::sleep_for(milliseconds(5));

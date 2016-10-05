@@ -23,7 +23,7 @@ using namespace isaac;
 TEST(StaticMethods, Device)
 {
 	Device::configure();
-	const unsigned pinNumber = 2;
+	const unsigned pinNumber = 7;
 	ASSERT_FALSE(Device::isOccupied(pinNumber));
 
 	{
@@ -38,19 +38,19 @@ TEST(StaticMethods, Device)
 TEST(Device, dumpInfo)
 {
 
-	Led device_sub1(5, "Blue light", "#2222222");
+	Led device_sub1(11, "Blue light", "#2222222");
 	auto j_info = device_sub1.dumpInfo();
 
 	ASSERT_EQ("Blue light", j_info["name"]);
 	int pin = j_info["powerPin"];
-	ASSERT_EQ(5, pin);
+	ASSERT_EQ(11, pin);
 	ASSERT_EQ("#2222222", j_info["id"]);
 }
 
 
 TEST(Device, getType)
 {
-	std::unique_ptr<Device> d = std::make_unique<Led>(6, "Green Light", "#2222222");
+	std::unique_ptr<Device> d = std::make_unique<Led>(13, "Green Light", "#2222222");
 	deviceType type           = deviceType::Base;
 
 	ASSERT_EQ(type, d->Device::getType());
@@ -59,12 +59,12 @@ TEST(Device, getType)
 
 TEST(Device, Name)
 {
-	ASSERT_THROW(Led l1(2), std::invalid_argument);
-	ASSERT_THROW(Led l1(2, ""), std::invalid_argument);
+	ASSERT_THROW(Led l1(7), std::invalid_argument);
+	ASSERT_THROW(Led l1(7, ""), std::invalid_argument);
 	std::string nameSoBig(55, 'a');
-	ASSERT_THROW(Led l1(2, nameSoBig), std::invalid_argument);
+	ASSERT_THROW(Led l1(7, nameSoBig), std::invalid_argument);
 
-	Led device_sub2(5, "Blue light", "#2222222");
+	Led device_sub2(11, "Blue light", "#2222222");
 	ASSERT_EQ("Blue light", device_sub2.getName());
 
 	std::string newName = "Green Light";
@@ -79,27 +79,27 @@ TEST(Device, Name)
 TEST(Device, Id)
 {
 
-	ASSERT_THROW(Led l1(2, "a", ""), std::invalid_argument);
-	ASSERT_THROW(Led l1(2, "a", "23424"), std::invalid_argument);
-	ASSERT_THROW(Led l1(2, "a", "ssdfqweqwexasda"), std::invalid_argument);
+	ASSERT_THROW(Led l1(7, "a", ""), std::invalid_argument);
+	ASSERT_THROW(Led l1(7, "a", "23424"), std::invalid_argument);
+	ASSERT_THROW(Led l1(7, "a", "ssdfqweqwexasda"), std::invalid_argument);
 
-	ASSERT_NO_THROW(Led l1(2, "a", "12345678"));
+	ASSERT_NO_THROW(Led l1(7, "a", "12345678"));
 
-	Led ll(5, "myName", "12345678");
+	Led ll(13, "myName", "12345678");
 	ASSERT_EQ("12345678", ll.getId());
 
 	// By itself a device has no concept of unique Ids
 	// so more than 2 devices can exist with same Ids unless
 	// they're inside deviceList container
 
-	Led l1(3, "a", "12345678");
-	Led l2(4, "a", "12345678");
+	Led l1(11, "a", "12345678");
+	Led l2(12, "a", "12345678");
 }
 
 
 TEST(Device, Description)
 {
-	Led device_sub(6, "Green LED", "#1111111");
+	Led device_sub(7, "Green LED", "#1111111");
 	EXPECT_EQ("Green LED", device_sub.getName());
 
 	ASSERT_EQ("null", device_sub.getDescription().dump());
@@ -112,4 +112,13 @@ TEST(Device, Description)
 	modifyDescription["colour"] = "green";
 	device_sub.setDescription(modifyDescription);
 	ASSERT_EQ(modifyDescription, device_sub.getDescription());
+}
+
+
+TEST(Device, Exception)
+{
+	ASSERT_THROW(Led l1(42, "a", "12345678"), std::invalid_argument);
+	std::string s(60, 'a');
+	ASSERT_THROW(Led l1(7, s, "12345678"), std::invalid_argument);
+	ASSERT_THROW(Led l1(8, "a", "12345678"), std::runtime_error);
 }

@@ -6,7 +6,7 @@
 using namespace isaac;
 
 
-TEST(Config, gpioNumPins) { ASSERT_EQ(40, config::gpioNumPins); }
+TEST(Config, gpioNumPins) { ASSERT_EQ(41, config::gpioNumPins); }
 
 
 TEST(Config, configFileNotPresent)
