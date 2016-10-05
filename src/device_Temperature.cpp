@@ -1,7 +1,7 @@
-#include "device_temp.hpp" 
+#include "device_Temperature.hpp"
 using namespace isaac;
 const std::string Temp::TEMPSEN_PATH
-  = config::getTempSensor(); 
+  = config::getTempSensor();
 char c;
 
 int Temp::getTemperature()
