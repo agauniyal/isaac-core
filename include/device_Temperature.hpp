@@ -4,49 +4,34 @@
 #include "device.hpp"
 #include <chrono>
 #include <fstream>
+
 namespace isaac {
 class Temp final : public Device {
 
 private:
-	std::mutex m_lastAccess;
-	std::chrono::time_point<std::chrono::system_clock> lastAccess;
+	int currTemperature;
+	bool busy;
+	std::mutex m_getTemp;
 	std::string folderName;
+	static const std::string TEMPSEN_PATH;
+	std::chrono::milliseconds::rep delayTime;
+
 	Temp(const Temp &) = delete;
 	Temp &operator=(const Temp &) = delete;
-	static const std::string TEMPSEN_PATH;  // done
-	std::string sensorFileName;  // done
-	bool flag;  // done
-	std::chrono::milliseconds::rep delayTime;  // done
-	int tempdata;  // done
 
 public:
-	Temp(const unsigned int _p, const std::string _n = "", const std::string _id = "",
-	  const std::string folder = "", std::chrono::milliseconds::rep _z = 2000)
-	    : Device(_p, _n, _id), delayTime(_z), folderName(folder)
-	{
-		logger->info("Led <{}> - pin <{}> constructed", getName(), getPowerPin());
-		char c;
-		std::string path;
-		path.reserve(40);
-		path.append(TEMPSEN_PATH).append("/").append(folder).append("/w1_slave");
+	Temp(const unsigned int, const std::string = "", const std::string = "", const std::string = "",
+	  std::chrono::milliseconds::rep = 0);
 
-		std::ifstream readStream(path);
-		readStream.seekg(1, std::ios::end);
-		std::streampos size = readStream.tellg();
-		for (int i = 1; i <= size; ++i) {
-			readStream.seekg(-i, std::ios::end);
-			readStream.get(c);
-			if (c == '=') break;
-		}
-		readStream >> tempdata;
+	Temp(const json _j, const std::string _id = "")
+	    : Temp(_j["powerPin"], _j["name"], _id, _j["folderName"], _j["delayTime"])
+	{
 	}
 
-	Temp(const json _j, const std::string _id = "") : Temp(_j["powerPin"], _j["name"], _id) {}
-	int getTemperature();  // done
+	int getTemperature();
 
-	deviceType getType() const override { return deviceType::TempSensor; }  // done
-
-	std::chrono::milliseconds::rep getDelay() const { return delayTime; }  // done
+	deviceType getType() const override { return deviceType::TempSensor; }
+	auto getDelay() const { return delayTime; }
 };
 }
 
