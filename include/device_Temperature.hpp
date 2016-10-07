@@ -10,7 +10,6 @@ class TempSensor final : public Device {
 
 private:
 	int currTemperature;
-	bool busy;
 	std::mutex m_getTemp;
 	std::string folderName;
 	static const std::string TEMPSEN_PATH;
