@@ -3,8 +3,7 @@ using namespace isaac;
 
 
 Led::Led(const unsigned int _p, const std::string _n, const std::string _id)
-    : Device(_p, _n, _id),
-      lastAccess(duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count())
+    : Device(_p, _n, _id), lastAccess(time_point_cast<seconds>(system_clock::now()))
 {
 	logger->info("Led <{}> - pin <{}> constructed", getName(), getPowerPin());
 }
@@ -17,7 +16,9 @@ Led::Led(const json _j, const std::string _id) : Led(_j.at("powerPin"), _j.at("n
 	}
 
 	if (_j.find("lastAccess") != _j.end()) {
-		lastAccess = _j["lastAccess"];
+		auto s = _j["lastAccess"];
+		time_point<system_clock, seconds> tp{ seconds{ s } };
+		lastAccess = tp;
 	}
 }
 
@@ -25,18 +26,21 @@ Led::Led(const json _j, const std::string _id) : Led(_j.at("powerPin"), _j.at("n
 void Led::off()
 {
 	std::lock_guard<std::mutex> lock(m_lastAccess);
-	lastAccess = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+	lastAccess = time_point_cast<seconds>(system_clock::now());
 	Device::off();
 }
 
 
-long Led::getLastAccessed() const { return lastAccess; }
+milliseconds::rep Led::getLastAccessed() const
+{
+	return duration_cast<milliseconds>(lastAccess.time_since_epoch()).count();
+}
 
 
 json Led::dumpInfo() const
 {
 	auto j          = Device::dumpInfo();
-	j["lastAccess"] = lastAccess;
+	j["lastAccess"] = lastAccess.time_since_epoch().count();
 	j["type"]       = dToInt(deviceType::Led);
 	return j;
 }

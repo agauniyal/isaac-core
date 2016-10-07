@@ -32,7 +32,7 @@ TEST(LedDevice, OnOff)
 
 TEST(LedDevice, getType)
 {
-	std::unique_ptr<Device> d = std::make_unique<Led>(15, "Green Light", "#2222222");
+	std::unique_ptr<Device> d = std::make_unique<Led>(11, "Green Light", "#2222222");
 	deviceType type           = deviceType::Led;
 
 	ASSERT_EQ(type, d->getType());

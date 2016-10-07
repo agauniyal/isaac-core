@@ -2,24 +2,27 @@
 #include <iostream>
 #include <uWS.h>
 
-using namespace isaac;
+using namespace uWS;
 
-int main()
+int main(int argc, char *argv[])
 {
-
-	try {
-		using namespace uWS;
-		EventSystem es(MASTER);
-		Server server(es, 3000, PERMESSAGE_DEFLATE, 0);
-
-		server.onConnection([](WebSocket socket) {});
-		server.onMessage([](WebSocket socket, char *message, size_t length, OpCode opCode) {
-			socket.send(message, length, opCode);
-		});
-		server.onDisconnection([](WebSocket socket, int code, char *message, size_t length) {});
-
-		es.run();
-	} catch (const std::exception &ex) {
-		std::cerr << ex.what() << std::endl;
+	if (argc != 2) {
+		std::cerr << "Run program as 'program <port>'\n";
+		return -1;
 	}
+
+	auto portNum = atoi(argv[1]);
+
+	Hub h;
+
+	h.onMessage([](WebSocket<SERVER> ws, const char *message, size_t length, OpCode op) {
+		ws.send(message, length, op);
+	});
+
+	auto listening = h.listen(portNum);
+	if (!listening) {
+		std::cerr << "Listening to port " << portNum << " failed" << std::endl;
+		return -1;
+	}
+	h.run();
 }

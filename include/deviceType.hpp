@@ -1,7 +1,7 @@
 #include <type_traits>
 
 namespace isaac {
-enum class deviceType { Base, Led, TempSensor };
+enum class deviceType { Base, Led, TempSensor, SmartSwitch };
 
 template <typename E> constexpr auto dToInt(E e) noexcept
 {

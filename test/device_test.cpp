@@ -50,7 +50,7 @@ TEST(Device, dumpInfo)
 
 TEST(Device, getType)
 {
-	std::unique_ptr<Device> d = std::make_unique<Led>(13, "Green Light", "#2222222");
+	std::unique_ptr<Device> d = std::make_unique<Led>(11, "Green Light", "#2222222");
 	deviceType type           = deviceType::Base;
 
 	ASSERT_EQ(type, d->Device::getType());
@@ -85,7 +85,7 @@ TEST(Device, Id)
 
 	ASSERT_NO_THROW(Led l1(7, "a", "12345678"));
 
-	Led ll(13, "myName", "12345678");
+	Led ll(7, "myName", "12345678");
 	ASSERT_EQ("12345678", ll.getId());
 
 	// By itself a device has no concept of unique Ids
