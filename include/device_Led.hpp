@@ -12,7 +12,7 @@ class Led final : public Device {
 
 private:
 	std::mutex m_lastAccess;
-	milliseconds::rep lastAccess;
+	time_point<system_clock, seconds> lastAccess;
 
 	Led(const Led &) = delete;
 	Led &operator=(const Led &) = delete;
@@ -23,7 +23,7 @@ public:
 
 	void off() override;
 	auto isOn() { return read(); }
-	long getLastAccessed() const;
+	milliseconds::rep getLastAccessed() const;
 	deviceType getType() const override { return deviceType::Led; }
 	json dumpInfo() const override;
 };

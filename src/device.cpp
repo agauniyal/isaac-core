@@ -46,6 +46,7 @@ Device::Device(const unsigned int _p, const std::string _n, const std::string _i
 
 	try {
 		mount();
+		off();
 		logger->info("Device <{}> with pin <{}> mounted", name, powerPin);
 	} catch (std::runtime_error &e) {
 		logger->error("Device <{}> - pin <{}> could not be created\n{}", name, powerPin, e.what());

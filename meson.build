@@ -5,7 +5,8 @@ inc = include_directories('include')
 
 thread_dep = dependency('threads')
 
-uWS_dep = dependency('uWS', fallback : ['uWS', 'uWS_dep'])
+uWS_sp = subproject('uWS')
+uWS_dep = uWS_sp.get_variable('uWS_dep')
 
 json_sp = subproject('json')
 json_dep = json_sp.get_variable('json_dep')
