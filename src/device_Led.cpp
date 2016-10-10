@@ -23,6 +23,14 @@ Led::Led(const json _j, const std::string _id) : Led(_j.at("powerPin"), _j.at("n
 }
 
 
+void Led::on()
+{
+	std::lock_guard<std::mutex> lock(m_lastAccess);
+	lastAccess = time_point_cast<seconds>(system_clock::now());
+	Device::on();
+}
+
+
 void Led::off()
 {
 	std::lock_guard<std::mutex> lock(m_lastAccess);

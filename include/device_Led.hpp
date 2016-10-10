@@ -21,6 +21,7 @@ public:
 	Led(const unsigned int, const std::string = "", const std::string = "");
 	Led(const json, const std::string = "");
 
+	void on() override;
 	void off() override;
 	auto isOn() { return read(); }
 	milliseconds::rep getLastAccessed() const;

@@ -15,8 +15,9 @@ std::string config::getGPIOBasePath(const std::string _file)
 	if (config) {
 		std::stringstream buffer;
 		buffer << config.rdbuf();
-		auto json_config = json::parse(buffer);
-		return json_config.at("gpio_path");
+		auto json_config        = json::parse(buffer);
+		static std::string path = json_config.at("gpio_path");
+		return path;
 
 	} else {
 		throw std::runtime_error("cannot read config.json");
@@ -32,8 +33,9 @@ std::string config::getJsonDBPath(const std::string _file)
 	if (config) {
 		std::stringstream buffer;
 		buffer << config.rdbuf();
-		auto json_config = json::parse(buffer);
-		return json_config.at("db_path");
+		auto json_config        = json::parse(buffer);
+		static std::string path = json_config.at("db_path");
+		return path;
 
 	} else {
 		throw std::runtime_error("cannot read config.json");
@@ -49,8 +51,9 @@ std::string config::getLogPath(const std::string _file)
 	if (config) {
 		std::stringstream buffer;
 		buffer << config.rdbuf();
-		auto json_config = json::parse(buffer);
-		return json_config.at("log_path");
+		auto json_config        = json::parse(buffer);
+		static std::string path = json_config.at("log_path");
+		return path;
 
 	} else {
 		throw std::runtime_error("cannot read config.json");
@@ -67,8 +70,9 @@ std::string config::getTempSensor(const std::string _file)
 	if (config) {
 		std::stringstream buffer;
 		buffer << config.rdbuf();
-		auto json_config = json::parse(buffer);
-		return json_config.at("tempSensor_path");
+		auto json_config        = json::parse(buffer);
+		static std::string path = json_config.at("tempSensor_path");
+		return path;
 
 	} else {
 		throw std::runtime_error("cannot read config.json");
