@@ -77,8 +77,8 @@ TEST(SwitchDevice, dumpInfo)
 	ASSERT_EQ(7, (int) jsonInfo.at("powerPin"));
 	ASSERT_EQ("#2222112", jsonInfo.at("id"));
 	ASSERT_EQ("Switch1", jsonInfo.at("name"));
-	ASSERT_GT(11, (int) jsonInfo.at("powerConsumption"));
-	ASSERT_LT(10, (int) jsonInfo.at("powerConsumption"));
+	ASSERT_GT(11, (double) jsonInfo.at("powerConsumption"));
+	ASSERT_LT(10, (double) jsonInfo.at("powerConsumption"));
 	ASSERT_EQ(type, (int) jsonInfo.at("type"));
 }
 
