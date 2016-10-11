@@ -1,5 +1,9 @@
 #include "deviceList.hpp"
 #include "device_Led.hpp"
+#include "device_Switch.hpp"
+#include "device_Temperature.hpp"
+#include "device_TripWire.hpp"
+#include "device_Buzzer.hpp"
 #include <algorithm>
 #include <fstream>
 #include <random>
@@ -41,19 +45,30 @@ bool deviceList::place(deviceType _Type, const json _j)
 		id = genId(8);
 	} while (list.count(id) != 0);
 
-	switch (_Type) {
+	try {
+		switch (_Type) {
 
-		case deviceType::Led: {
-			try {
-				auto res = list.emplace(std::make_pair(id, std::make_unique<Led>(_j, id)));
-				logger->info("Device inserted\n{}", _j.dump(4));
-				return res.second;
-			} catch (const std::exception &e) {
-				logger->info(e.what());
-				return false;
-			}
+			case deviceType::Led:
+				return list.emplace(std::make_pair(id, std::make_unique<Led>(_j, id))).second;
+
+			case deviceType::TempSensor:
+				return list.emplace(std::make_pair(id, std::make_unique<TempSensor>(_j, id)))
+				  .second;
+
+			case deviceType::Switch:
+				return list.emplace(std::make_pair(id, std::make_unique<Switch>(_j, id))).second;
+
+			case deviceType::TripWire:
+				return list.emplace(std::make_pair(id, std::make_unique<TripWire>(_j, id))).second;
+
+			case deviceType::Buzzer:
+				return list.emplace(std::make_pair(id, std::make_unique<Buzzer>(_j, id))).second;
+
+			default: logger->info("Device type not recognized\n"); return false;
 		}
-		default: return false;
+	} catch (std::exception &e) {
+		logger->error("Cannot place device, exception thrown - {}", e.what());
+		return false;
 	}
 }
 

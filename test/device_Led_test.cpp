@@ -39,15 +39,14 @@ TEST(LedDevice, getType)
 }
 
 
-TEST(LedDevice, getLastAccessed)
+TEST(LedDevice, dumpInfo)
 {
-	using namespace std::chrono;
+	Led l1(7, "MyLed", "12345678");
+	auto jsonInfo = l1.dumpInfo();
+	auto type     = dToInt(deviceType::Led);
 
-	Led l1(11, "greenLed", "#1234567");
-	auto epoch = l1.getLastAccessed();
-
-	std::this_thread::sleep_for(milliseconds(5));
-
-	auto epochNow = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-	ASSERT_GT(epochNow, epoch);
+	ASSERT_EQ(7, jsonInfo.at("powerPin"));
+	ASSERT_EQ("12345678", jsonInfo.at("id"));
+	ASSERT_EQ("MyLed", jsonInfo.at("name"));
+	ASSERT_EQ(type, jsonInfo.at("type"));
 }

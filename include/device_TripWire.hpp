@@ -28,7 +28,7 @@ public:
 	}
 
 	int getResistance();
-	deviceType getType() const override { return deviceType::TripWireSensor; }
+	deviceType getType() const override { return deviceType::TripWire; }
 };
 }
 

@@ -47,3 +47,28 @@ TEST(TemperatureSensorDevice, getTemperatureMultiThread)
 	std::chrono::duration<double> elapsed_seconds = end - start;
 	ASSERT_GT(2, elapsed_seconds.count());
 }
+
+
+TEST(TemperatureSensorDevice, getType)
+{
+	std::unique_ptr<Device> d
+	  = std::make_unique<TempSensor>(7, "abc", "12345678", "tempSensor", 1000);
+	deviceType type = deviceType::TempSensor;
+
+	ASSERT_EQ(type, d->getType());
+}
+
+
+TEST(TemperatureSensorDevice, dumpInfo)
+{
+	TempSensor t1(7, "#123123", "12345678", "tempSensor");
+	auto jsonInfo = t1.dumpInfo();
+	auto type     = dToInt(deviceType::TempSensor);
+
+	ASSERT_EQ(7, jsonInfo.at("powerPin"));
+	ASSERT_EQ("12345678", jsonInfo.at("id"));
+	ASSERT_EQ("#123123", jsonInfo.at("name"));
+	ASSERT_EQ(0, jsonInfo.at("delayTime"));
+	ASSERT_EQ("tempSensor", jsonInfo.at("folderName"));
+	ASSERT_EQ(type, jsonInfo.at("type"));
+}

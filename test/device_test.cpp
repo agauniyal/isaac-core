@@ -2,7 +2,6 @@
 #include "device_Led.hpp"
 #include <fstream>
 #include <gtest/gtest.h>
-#include <unistd.h>
 
 using namespace isaac;
 
@@ -122,7 +121,4 @@ TEST(Device, Exception)
 	std::string s(60, 'a');
 	ASSERT_THROW(Led l1(7, s, "12345678"), std::invalid_argument);
 	ASSERT_THROW(Led l1(8, "a", "12345678"), std::runtime_error);
-	//std::cerr << chdir("debug/raspi/path");
-	int result= rename( "debug/raspi/path/test.txt" , "newname.txt" );
-
 }

@@ -6,11 +6,11 @@
 
 using namespace isaac;
 
-std::string config::getGPIOBasePath(const std::string _file)
+std::string config::getGPIOBasePath()
 {
 	using json = nlohmann::json;
 
-	std::ifstream config(_file);
+	std::ifstream config("config.json");
 	std::string path = "";
 	if (config) {
 		std::stringstream buffer;
@@ -24,11 +24,11 @@ std::string config::getGPIOBasePath(const std::string _file)
 	}
 }
 
-std::string config::getJsonDBPath(const std::string _file)
+std::string config::getJsonDBPath()
 {
 	using json = nlohmann::json;
 
-	std::ifstream config(_file);
+	std::ifstream config("config.json");
 	std::string path = "";
 	if (config) {
 		std::stringstream buffer;
@@ -42,11 +42,11 @@ std::string config::getJsonDBPath(const std::string _file)
 	}
 }
 
-std::string config::getLogPath(const std::string _file)
+std::string config::getLogPath()
 {
 	using json = nlohmann::json;
 
-	std::ifstream config(_file);
+	std::ifstream config("config.json");
 	std::string path = "";
 	if (config) {
 		std::stringstream buffer;
@@ -61,11 +61,11 @@ std::string config::getLogPath(const std::string _file)
 }
 
 
-std::string config::getTempSensor(const std::string _file)
+std::string config::getTempSensor()
 {
 	using json = nlohmann::json;
 
-	std::ifstream config(_file);
+	std::ifstream config("config.json");
 	std::string path = "";
 	if (config) {
 		std::stringstream buffer;

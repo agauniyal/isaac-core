@@ -9,7 +9,7 @@ namespace isaac {
 
 using namespace std::chrono;
 
-class SmartSwitch final : public Device {
+class Switch final : public Device {
 
 private:
 	std::mutex m_runTime;
@@ -18,13 +18,13 @@ private:
 	time_point<system_clock, seconds> lastOn;
 	float powerConsumption;
 
-	SmartSwitch(const SmartSwitch &) = delete;
-	SmartSwitch &operator=(const SmartSwitch &) = delete;
+	Switch(const Switch &) = delete;
+	Switch &operator=(const Switch &) = delete;
 
 public:
-	SmartSwitch(
+	Switch(
 	  const unsigned int, const std::string = "", const std::string = "", const float = 0.0);
-	SmartSwitch(const json, const std::string = "");
+	Switch(const json, const std::string = "");
 
 	void on() override;
 	void off() override;
@@ -34,7 +34,7 @@ public:
 	float getPowerConsumption() const { return powerConsumption; }
 	void setPowerConsumption(float = 0.0);
 
-	deviceType getType() const override { return deviceType::SmartSwitch; }
+	deviceType getType() const override { return deviceType::Switch; }
 	json dumpInfo() const override;
 };
 }

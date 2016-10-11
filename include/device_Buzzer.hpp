@@ -18,6 +18,7 @@ public:
 
 	void on() override;
 	void off() override;
+	auto isOn() { return read(); }
 	deviceType getType() const override { return deviceType::Buzzer; }
 	json dumpInfo() const override;
 };
