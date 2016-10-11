@@ -1,6 +1,5 @@
 #include "deviceList.hpp"
 #include "device_Led.hpp"
-#include <fstream>
 #include <gtest/gtest.h>
 
 using namespace isaac;
@@ -49,4 +48,25 @@ TEST(LedDevice, dumpInfo)
 	ASSERT_EQ("12345678", jsonInfo.at("id"));
 	ASSERT_EQ("MyLed", jsonInfo.at("name"));
 	ASSERT_EQ(type, jsonInfo.at("type"));
+}
+
+
+TEST(LedDevice, place)
+{
+	deviceList list;
+	deviceType type = deviceType::Led;
+
+	json j1 = json::object();
+
+	j1["powerPin"] = nullptr;
+	ASSERT_FALSE(list.place(type, j1).second);
+
+	j1["name"]        = "abc";
+	j1["powerPin"]    = 7;
+	j1["description"] = "A new Led device";
+	ASSERT_EQ(true, list.place(type, j1).second);
+	ASSERT_EQ(1, list.size());
+
+	json j2 = json::object();
+	ASSERT_FALSE(list.place(type, j2).second);
 }

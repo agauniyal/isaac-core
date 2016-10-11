@@ -49,3 +49,25 @@ TEST(BuzzerDevice, dumpInfo)
 	ASSERT_EQ("MyBuzzer", jsonInfo.at("name"));
 	ASSERT_EQ(type, jsonInfo.at("type"));
 }
+
+
+TEST(BuzzerDevice, place)
+{
+	deviceList list;
+	deviceType type = deviceType::Buzzer;
+
+	json j1 = json::object();
+
+	j1["powerPin"] = nullptr;
+	j1["name"]     = nullptr;
+	ASSERT_FALSE(list.place(type, j1).second);
+
+	j1["name"]        = "abc";
+	j1["powerPin"]    = 7;
+	j1["description"] = "A new Buzzer device";
+	ASSERT_EQ(true, list.place(type, j1).second);
+	ASSERT_EQ(1, list.size());
+
+	json j2 = json::object();
+	ASSERT_FALSE(list.place(type, j2).second);
+}

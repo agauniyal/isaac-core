@@ -1,6 +1,5 @@
 #include "deviceList.hpp"
 #include "device_Switch.hpp"
-#include <fstream>
 #include <gtest/gtest.h>
 
 using namespace isaac;
@@ -73,7 +72,7 @@ TEST(SwitchDevice, dumpInfo)
 	s1.off();
 
 	auto jsonInfo = s1.dumpInfo();
-	auto type = dToInt(deviceType::Switch);
+	auto type     = dToInt(deviceType::Switch);
 
 	ASSERT_EQ(7, jsonInfo.at("powerPin"));
 	ASSERT_EQ("#2222112", jsonInfo.at("id"));
@@ -81,4 +80,27 @@ TEST(SwitchDevice, dumpInfo)
 	ASSERT_GT(11, jsonInfo.at("powerConsumption"));
 	ASSERT_LT(10, jsonInfo.at("powerConsumption"));
 	ASSERT_EQ(type, jsonInfo.at("type"));
+}
+
+
+TEST(SwitchDevice, place)
+{
+	deviceList list;
+	deviceType type = deviceType::Switch;
+
+	json j1 = json::object();
+
+	j1["powerPin"]         = nullptr;
+	j1["name"]             = nullptr;
+	j1["powerConsumption"] = 5.2;
+	ASSERT_FALSE(list.place(type, j1).second);
+
+	j1["name"]        = "abc";
+	j1["powerPin"]    = 7;
+	j1["description"] = "A new Switch device";
+	ASSERT_EQ(true, list.place(type, j1).second);
+	ASSERT_EQ(1, list.size());
+
+	json j2 = json::object();
+	ASSERT_FALSE(list.place(type, j2).second);
 }

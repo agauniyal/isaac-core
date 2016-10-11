@@ -2,7 +2,6 @@
 #define DEVICE_LED_HPP
 
 #include "device.hpp"
-#include <chrono>
 
 namespace isaac {
 

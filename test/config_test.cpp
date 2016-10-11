@@ -1,5 +1,7 @@
+#include "config.hpp"
 #include "deviceList.hpp"
 #include "device_Led.hpp"
+
 #include <cstdio>
 #include <fstream>
 #include <gtest/gtest.h>

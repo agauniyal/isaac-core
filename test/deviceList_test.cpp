@@ -15,25 +15,20 @@ TEST(DeviceList, place)
 
 	j1["powerPin"] = nullptr;
 	j1["name"]     = nullptr;
-	ASSERT_FALSE(list.place(type, j1));
+	ASSERT_FALSE(list.place(type, j1).second);
 
 	j1["name"]     = "abc";
 	j1["powerPin"] = 7;
-	ASSERT_EQ(true, list.place(type, j1));
+	ASSERT_EQ(true, list.place(type, j1).second);
 	ASSERT_EQ(1, list.size());
 
 	j1["powerPin"] = 11;
 	j1["name"]     = "def";
-	ASSERT_EQ(true, list.place(type, j1));
+	ASSERT_EQ(true, list.place(type, j1).second);
 	ASSERT_EQ(2, list.size());
-
-	ASSERT_EQ(2, list.size());
-
-	json j2 = json::object();
-	ASSERT_FALSE(list.place(type, j2));
 
 	deviceType uncompatibleType = deviceType::Base;
-	ASSERT_FALSE(list.place(uncompatibleType, j1));
+	ASSERT_FALSE(list.place(uncompatibleType, j1).second);
 }
 
 
@@ -46,13 +41,17 @@ TEST(DeviceList, removeId)
 	j1["powerPin"] = 7;
 	j1["name"]     = "abc";
 
-	ASSERT_EQ(true, list.place(type, j1));
+	auto result = list.place(type, j1);
+	auto all    = list.getAll();
+	auto id     = all[0].first;
+
+	ASSERT_EQ(true, result.second);
+	ASSERT_EQ(id, result.first);
 	ASSERT_EQ(1, list.size());
 
-	auto all = list.getAll();
 	ASSERT_EQ(1, all.size());
 
-	auto id = all[0].first;
+
 	ASSERT_EQ(true, list.removeId(id));
 	ASSERT_EQ(0, list.size());
 
@@ -69,21 +68,19 @@ TEST(DeviceList, syncmemtodisk)
 	j1["powerPin"]  = 7;
 	j1["name"]      = "abc";
 
-	EXPECT_EQ(true, list.place(type, j1));
+	EXPECT_EQ(true, list.place(type, j1).second);
 	ASSERT_THROW(list.sync(1, "abc/bcd.json"), std::runtime_error);
 	ASSERT_THROW(list.sync(0, "abc/bcd.json"), std::runtime_error);
+
 	list.place(type, j1);
 	list.sync(1, "db1.json");
+
 	std::ifstream db("db1.json");
-	if (db) {
-		std::stringstream buffer;
-		buffer << db.rdbuf();
-		auto json_db = json::parse(buffer);
-		int a        = json_db[0].at("powerPin");
-		ASSERT_EQ(7, a);
-	} else {
-		ASSERT_EQ(1, 2);
-	}
+	std::stringstream buffer;
+	buffer << db.rdbuf();
+	auto json_db = json::parse(buffer);
+	int a        = json_db[0].at("powerPin");
+	ASSERT_EQ(7, a);
 }
 TEST(DeviceList, syncdisktomem)
 {
@@ -112,11 +109,11 @@ TEST(DeviceList, proxyMethods)
 
 	j1["powerPin"] = 7;
 	j1["name"]     = "abc";
-	EXPECT_EQ(true, list.place(type, j1));
+	EXPECT_EQ(true, list.place(type, j1).second);
 
 	j1["powerPin"] = 11;
 	j1["name"]     = "def";
-	EXPECT_EQ(true, list.place(type, j1));
+	EXPECT_EQ(true, list.place(type, j1).second);
 
 	ASSERT_EQ(2, list.size());
 	ASSERT_LT(1, list.max_size());

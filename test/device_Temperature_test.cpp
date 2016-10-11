@@ -2,7 +2,6 @@
 #include "device_Temperature.hpp"
 #include <chrono>
 #include <future>
-
 #include <gtest/gtest.h>
 
 using namespace isaac;
@@ -71,4 +70,30 @@ TEST(TemperatureSensorDevice, dumpInfo)
 	ASSERT_EQ(0, jsonInfo.at("delayTime"));
 	ASSERT_EQ("tempSensor", jsonInfo.at("folderName"));
 	ASSERT_EQ(type, jsonInfo.at("type"));
+}
+
+
+TEST(TemperatureSensorDevice, place)
+{
+	deviceList list;
+	deviceType type = deviceType::TempSensor;
+
+	json j1 = json::object();
+
+	j1["powerPin"]   = nullptr;
+	j1["name"]       = nullptr;
+	j1["folderName"] = nullptr;
+
+	ASSERT_FALSE(list.place(type, j1).second);
+
+	j1["name"]        = "abc";
+	j1["powerPin"]    = 7;
+	j1["folderName"]  = "tempSensor";
+	j1["delayTime"]   = 200;
+	j1["description"] = "A new TemperatureSensor device";
+	ASSERT_EQ(true, list.place(type, j1).second);
+	ASSERT_EQ(1, list.size());
+
+	// json j2 = json::object();
+	// ASSERT_FALSE(list.place(type, j2).second);
 }
