@@ -74,12 +74,12 @@ TEST(SwitchDevice, dumpInfo)
 	auto jsonInfo = s1.dumpInfo();
 	auto type     = dToInt(deviceType::Switch);
 
-	ASSERT_EQ(7, jsonInfo.at("powerPin"));
+	ASSERT_EQ(7, (int) jsonInfo.at("powerPin"));
 	ASSERT_EQ("#2222112", jsonInfo.at("id"));
 	ASSERT_EQ("Switch1", jsonInfo.at("name"));
-	ASSERT_GT(11, jsonInfo.at("powerConsumption"));
-	ASSERT_LT(10, jsonInfo.at("powerConsumption"));
-	ASSERT_EQ(type, jsonInfo.at("type"));
+	ASSERT_GT(11, (int) jsonInfo.at("powerConsumption"));
+	ASSERT_LT(10, (int) jsonInfo.at("powerConsumption"));
+	ASSERT_EQ(type, (int) jsonInfo.at("type"));
 }
 
 
@@ -98,7 +98,7 @@ TEST(SwitchDevice, place)
 	j1["name"]        = "abc";
 	j1["powerPin"]    = 7;
 	j1["description"] = "A new Switch device";
-	j1["lastOn"] = 1476216230093;
+	j1["lastOn"]      = 1476216230093;
 	ASSERT_EQ(true, list.place(type, j1).second);
 	ASSERT_EQ(1, list.size());
 

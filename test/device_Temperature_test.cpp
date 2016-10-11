@@ -64,12 +64,12 @@ TEST(TemperatureSensorDevice, dumpInfo)
 	auto jsonInfo = t1.dumpInfo();
 	auto type     = dToInt(deviceType::TempSensor);
 
-	ASSERT_EQ(7, jsonInfo.at("powerPin"));
+	ASSERT_EQ(7, (int) jsonInfo.at("powerPin"));
 	ASSERT_EQ("12345678", jsonInfo.at("id"));
 	ASSERT_EQ("#123123", jsonInfo.at("name"));
-	ASSERT_EQ(0, jsonInfo.at("delayTime"));
+	ASSERT_EQ(0, (int) jsonInfo.at("delayTime"));
 	ASSERT_EQ("tempSensor", jsonInfo.at("folderName"));
-	ASSERT_EQ(type, jsonInfo.at("type"));
+	ASSERT_EQ(type, (int) jsonInfo.at("type"));
 }
 
 

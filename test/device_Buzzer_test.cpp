@@ -44,10 +44,10 @@ TEST(BuzzerDevice, dumpInfo)
 	auto jsonInfo = b1.dumpInfo();
 	auto type     = dToInt(deviceType::Buzzer);
 
-	ASSERT_EQ(7, jsonInfo.at("powerPin"));
+	ASSERT_EQ(7, (int)jsonInfo.at("powerPin"));
 	ASSERT_EQ("12345678", jsonInfo.at("id"));
 	ASSERT_EQ("MyBuzzer", jsonInfo.at("name"));
-	ASSERT_EQ(type, jsonInfo.at("type"));
+	ASSERT_EQ(type, (int)jsonInfo.at("type"));
 }
 
 
