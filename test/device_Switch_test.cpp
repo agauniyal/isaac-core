@@ -98,6 +98,7 @@ TEST(SwitchDevice, place)
 	j1["name"]        = "abc";
 	j1["powerPin"]    = 7;
 	j1["description"] = "A new Switch device";
+	j1["lastOn"] = 1476216230093;
 	ASSERT_EQ(true, list.place(type, j1).second);
 	ASSERT_EQ(1, list.size());
 

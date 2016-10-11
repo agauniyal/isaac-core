@@ -23,8 +23,10 @@ public:
 		logger->info("TripWire <{}> - pin <{}> constructed", getName(), getPowerPin());
 	}
 
-	TripWire(const json _j, const std::string _id = "") : TripWire(_j["powerPin"], _j["name"], _id)
+	TripWire(const json _j, const std::string _id = "")
+	    : TripWire(_j.at("powerPin"), _j.at("name"), _id)
 	{
+		// set lastBreak if found
 	}
 
 	int getResistance();

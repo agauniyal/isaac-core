@@ -13,6 +13,7 @@ int TripWire::getResistance()
 		Device::off();
 		// std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		Device::setDirection(0);
+		int pin = getPowerPin();
 		while (read() == 0 && cycles < 2000) {
 			++cycles;
 		}
