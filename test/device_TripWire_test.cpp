@@ -10,7 +10,7 @@ TEST(TripWireDevice, Constructor)
 	ASSERT_THROW(TripWire t1(7), std::invalid_argument);
 	ASSERT_THROW(TripWire t1(7, ""), std::invalid_argument);
 	ASSERT_THROW(TripWire t1(7, "", ""), std::invalid_argument);
-	ASSERT_THROW(TripWire t1(7, "", "", -200), std::invalid_argument);
+	ASSERT_THROW(TripWire t1(7, "TripWire#1", "12345678", -1), std::invalid_argument);
 	ASSERT_NO_THROW(TripWire t1(7, "abc", "12345678"));
 	ASSERT_NO_THROW(TripWire t1(7, "abc", "12345678", 500));
 
@@ -61,7 +61,7 @@ TEST(TripWireDevice, dumpInfo)
 	ASSERT_EQ(7, (int) jsonInfo.at("powerPin"));
 	ASSERT_EQ("#2222112", jsonInfo.at("id"));
 	ASSERT_EQ("TripWire1", jsonInfo.at("name"));
-	ASSERT_EQ(100, jsonInfo.at("maxCycles"));
+	ASSERT_EQ(100, (int) jsonInfo.at("maxCycles"));
 	ASSERT_EQ(type, (int) jsonInfo.at("type"));
 }
 
@@ -73,15 +73,15 @@ TEST(TripWireDevice, place)
 
 	json j1 = json::object();
 
-	j1["powerPin"]         = nullptr;
-	j1["name"]             = nullptr;
+	j1["powerPin"]  = nullptr;
+	j1["name"]      = nullptr;
 	j1["maxCycles"] = 200;
 	ASSERT_FALSE(list.place(type, j1).second);
 
 	j1["name"]        = "abc";
 	j1["powerPin"]    = 7;
 	j1["description"] = "A new TripWire device";
-	j1["lastBreak"]      = 1476216230093;
+	j1["lastBreak"]   = 1476216230093;
 	ASSERT_EQ(true, list.place(type, j1).second);
 	ASSERT_EQ(1, list.size());
 
