@@ -26,6 +26,7 @@ public:
 	}
 
 	bool intrusion();
+	auto active() { return read(); }
 
 	auto getLastBreak() const
 	{
