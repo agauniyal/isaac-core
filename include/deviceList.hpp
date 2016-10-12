@@ -18,7 +18,7 @@ class deviceList final {
 	umap list;
 	std::mutex m_list;
 
-	static std::string genId(const unsigned int = 8);
+	static std::string genId(const int = 8);
 
 	static const std::shared_ptr<spdlog::logger> logger;
 

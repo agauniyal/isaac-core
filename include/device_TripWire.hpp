@@ -4,33 +4,36 @@
 #include "device.hpp"
 #include <chrono>
 namespace isaac {
+
+using namespace std::chrono;
+
 class TripWire final : public Device {
 
 private:
+	int maxCycles;
 	std::mutex m_trip;
 	std::mutex m_lastBreak;
-	std::chrono::time_point<std::chrono::system_clock> lastBreak;
-	int maxcycles;
+	time_point<system_clock> lastBreak;
 	TripWire(const TripWire &) = delete;
 	TripWire &operator=(const TripWire &) = delete;
 
-	static const std::string TripWire_PATH;
-
 public:
-	TripWire(const unsigned int _p, const std::string _n = "", const std::string _id = "",const int _c=200)
-	    : Device(_p, _n, _id),maxcycles(_c)
-	{
-		logger->info("TripWire <{}> - pin <{}> constructed", getName(), getPowerPin());
-	}
+	TripWire(const int, const std::string = "", const std::string = "", const int = 200);
 
 	TripWire(const json _j, const std::string _id = "")
-	    : TripWire(_j.at("powerPin"), _j.at("name"), _id)
+	    : TripWire(_j.at("powerPin"), _j.at("name"), _id, _j.at("maxCycles"))
 	{
-		
 	}
 
 	bool intrusion();
+
+	auto getLastBreak() const
+	{
+		return duration_cast<milliseconds>(lastBreak.time_since_epoch()).count();
+	}
+
 	deviceType getType() const override { return deviceType::TripWire; }
+	json dumpInfo() const override;
 };
 }
 

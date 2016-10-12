@@ -6,7 +6,9 @@
 namespace isaac {
 
 namespace config {
-	constexpr unsigned int gpioNumPins = 41;
+
+	constexpr int gpioNumPins = 41;
+
 	std::string getGPIOBasePath();
 	std::string getJsonDBPath();
 	std::string getLogPath();

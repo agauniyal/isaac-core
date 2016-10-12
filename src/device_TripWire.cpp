@@ -2,26 +2,40 @@
 
 using namespace isaac;
 
-const std::string TripWire::TripWire_PATH = config::getGPIOBasePath();
+
+TripWire::TripWire(const int _p, const std::string _n, const std::string _id, const int _c)
+    : Device(_p, _n, _id), maxCycles(_c)
+{
+	if (maxCycles < 1) {
+		logger->error("TripWire <{}> maxCycles must be +ve integer", getName());
+		throw std::invalid_argument("Supplied argument for maxCycles isn't valid");
+	}
+	logger->info("TripWire <{}> - pin <{}> constructed", getName(), getPowerPin());
+}
 
 
 bool TripWire::intrusion()
 {
-	
 	if (m_trip.try_lock()) {
 		int cycles = 0;
 		Device::on();
 		Device::off();
-		
 		Device::setDirection(0);
-		
-		while (read() == 0 && cycles < maxcycles) {
+		while (read() == 0 && cycles < maxCycles) {
 			++cycles;
 		}
 		m_trip.unlock();
-	
-		return (cycles==maxcycles)?true:false;
+		return (cycles == maxCycles) ? true : false;
 	}
 	return false;
 }
 
+
+json TripWire::dumpInfo() const
+{
+	auto j         = Device::dumpInfo();
+	j["maxCycles"] = maxCycles;
+	j["lastBreak"] = lastBreak.time_since_epoch().count();
+	j["type"]      = dToInt(deviceType::Switch);
+	return j;
+}

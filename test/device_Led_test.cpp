@@ -45,10 +45,10 @@ TEST(LedDevice, dumpInfo)
 	auto type     = dToInt(deviceType::Led);
 
 
-	ASSERT_EQ(7, (int)jsonInfo.at("powerPin"));
+	ASSERT_EQ(7, (int) jsonInfo.at("powerPin"));
 	ASSERT_EQ("12345678", jsonInfo.at("id"));
 	ASSERT_EQ("MyLed", jsonInfo.at("name"));
-	ASSERT_EQ(type, (int)jsonInfo.at("type"));
+	ASSERT_EQ(type, (int) jsonInfo.at("type"));
 }
 
 

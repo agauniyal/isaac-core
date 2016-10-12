@@ -64,6 +64,19 @@ TEST(SwitchDevice, powerConsumption)
 }
 
 
+TEST(SwitchDevice, getLastOn)
+{
+	Switch s1(7, "Switch1", "#2222112", 5.0);
+
+	auto t1 = std::chrono::duration_cast<std::chrono::milliseconds>(
+	  std::chrono::system_clock::now().time_since_epoch());
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+	s1.on();
+	s1.off();
+	ASSERT_LT(t1.count(), s1.getLastOn());
+}
+
+
 TEST(SwitchDevice, dumpInfo)
 {
 	Switch s1(7, "Switch1", "#2222112", 10.5);

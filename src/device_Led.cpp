@@ -3,7 +3,7 @@
 using namespace isaac;
 
 
-Led::Led(const unsigned int _p, const std::string _n, const std::string _id) : Device(_p, _n, _id)
+Led::Led(const int _p, const std::string _n, const std::string _id) : Device(_p, _n, _id)
 {
 	logger->info("Led <{}> - pin <{}> constructed", getName(), getPowerPin());
 }

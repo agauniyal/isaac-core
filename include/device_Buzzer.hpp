@@ -13,7 +13,7 @@ private:
 	Buzzer &operator=(const Buzzer &) = delete;
 
 public:
-	Buzzer(const unsigned int, const std::string = "", const std::string = "");
+	Buzzer(const int, const std::string = "", const std::string = "");
 	Buzzer(const json, const std::string = "");
 
 	void on() override;

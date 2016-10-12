@@ -3,8 +3,7 @@
 using namespace isaac;
 
 
-Buzzer::Buzzer(const unsigned int _p, const std::string _n, const std::string _id)
-    : Device(_p, _n, _id)
+Buzzer::Buzzer(const int _p, const std::string _n, const std::string _id) : Device(_p, _n, _id)
 {
 	logger->info("Buzzer <{}> - pin <{}> constructed", getName(), getPowerPin());
 }

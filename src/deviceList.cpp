@@ -1,9 +1,5 @@
 #include "deviceList.hpp"
-#include "device_Buzzer.hpp"
-#include "device_Led.hpp"
-#include "device_Switch.hpp"
-#include "device_Temperature.hpp"
-#include "device_TripWire.hpp"
+#include "devices_all.hpp"
 
 #include <fstream>
 #include <random>
@@ -16,7 +12,7 @@ const std::shared_ptr<spdlog::logger> deviceList::logger
   = spdlog::rotating_logger_mt("DL_Logger", config::getLogPath() + "deviceList", 1048576 * 5, 3);
 
 
-std::string deviceList::genId(const unsigned int _len)
+std::string deviceList::genId(const int _len)
 {
 	std::string result;
 	result.reserve(_len);
@@ -29,7 +25,7 @@ std::string deviceList::genId(const unsigned int _len)
 	static std::mt19937 gen(seed);
 	std::uniform_int_distribution<> dis(0, 61);
 
-	for (unsigned int i = 0; i < _len; i++) {
+	for (int i = 0; i < _len; i++) {
 		result += alphanum[dis(gen)];
 	}
 	return result;

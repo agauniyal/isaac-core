@@ -13,11 +13,11 @@ const std::shared_ptr<spdlog::logger> Device::logger
   = spdlog::rotating_logger_mt("D_Logger", config::getLogPath() + "device", 1048576 * 5, 3);
 
 
-Device::Device(const unsigned int _p, const std::string _n, const std::string _id) : powerPin(_p)
+Device::Device(const int _p, const std::string _n, const std::string _id) : powerPin(_p)
 {
-	if (powerPin > config::gpioNumPins) {
+	if (powerPin > config::gpioNumPins || powerPin < 1) {
 		logger->error("Pin <{}> is not valid", powerPin);
-		throw std::invalid_argument("pin number cannot exceed gpio::NumPins");
+		throw std::invalid_argument("Supplied argument is not a valid pin number");
 	}
 
 	if (_id.size() == 8) {
@@ -196,7 +196,6 @@ json Device::dumpInfo() const
 	info["id"]          = id;
 	info["name"]        = name;
 	info["description"] = description;
-	info["type"]        = dToInt(deviceType::Base);
 	return info;
 }
 

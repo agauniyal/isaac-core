@@ -18,8 +18,8 @@ private:
 	TempSensor &operator=(const TempSensor &) = delete;
 
 public:
-	TempSensor(const unsigned int, const std::string = "", const std::string = "",
-	  const std::string = "", std::chrono::milliseconds::rep = 0);
+	TempSensor(const int, const std::string = "", const std::string = "", const std::string = "",
+	  std::chrono::milliseconds::rep = 0);
 
 	TempSensor(const json _j, const std::string _id = "")
 	    : TempSensor(_j.at("powerPin"), _j.at("name"), _id, _j.at("folderName"), _j.at("delayTime"))

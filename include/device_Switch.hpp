@@ -22,15 +22,21 @@ private:
 	Switch &operator=(const Switch &) = delete;
 
 public:
-	Switch(
-	  const unsigned int, const std::string = "", const std::string = "", const float = 0.0);
+	Switch(const int, const std::string = "", const std::string = "", const float = 0.0);
 	Switch(const json, const std::string = "");
 
 	void on() override;
 	void off() override;
 	auto isOn() { return read(); }
+
 	seconds::rep getRunTime() const { return runTime.count(); }
 	void resetRunTime() { runTime = 0s; }
+
+	auto getLastOn() const
+	{
+		return duration_cast<milliseconds>(lastOn.time_since_epoch()).count();
+	}
+
 	float getPowerConsumption() const { return powerConsumption; }
 	void setPowerConsumption(float = 0.0);
 

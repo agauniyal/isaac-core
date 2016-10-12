@@ -16,7 +16,7 @@ private:
 	Led &operator=(const Led &) = delete;
 
 public:
-	Led(const unsigned int, const std::string = "", const std::string = "");
+	Led(const int, const std::string = "", const std::string = "");
 	Led(const json, const std::string = "");
 
 	void on() override;

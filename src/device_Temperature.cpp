@@ -6,7 +6,7 @@ using namespace isaac;
 const std::string TempSensor::TEMPSEN_PATH = config::getTempSensor();
 
 
-TempSensor::TempSensor(const unsigned int _p, const std::string _n, const std::string _id,
+TempSensor::TempSensor(const int _p, const std::string _n, const std::string _id,
   const std::string _f, std::chrono::milliseconds::rep _d)
     : Device(_p, _n, _id), folderName(_f), delayTime(_d)
 {
