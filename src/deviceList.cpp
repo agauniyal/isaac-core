@@ -35,10 +35,10 @@ std::string deviceList::genId(const int _len)
 std::pair<std::string, bool> deviceList::place(deviceType _Type, const json _j)
 {
 	std::string id;
-	id.reserve(8);
+	id.reserve(config::idLength);
 
 	do {
-		id = genId(8);
+		id = genId(config::idLength);
 	} while (list.count(id) != 0);
 
 	bool result = false;

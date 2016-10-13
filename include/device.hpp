@@ -15,7 +15,7 @@ using json = nlohmann::json;
 class Device {
 
 	int powerPin;
-	char id[9] = {};
+	char id[config::idLength + 1] = {};
 
 	static const std::string GPIO_PATH;
 
@@ -42,13 +42,13 @@ protected:
 	// 0 => 'in' | 1 => 'out'
 	void setDirection(bool);
 	bool getDirection() const;
-	int getPowerPin() const noexcept { return powerPin; }
+	int getPowerPin() const { return powerPin; }
 
 	// pinNumber and deviceName and id
 	Device(const int, const std::string = "", const std::string = "");
 
 public:
-	std::string getId() const noexcept { return id; }
+	std::string getId() const { return id; }
 	std::string getName() { return name; }
 	json getDescription() const { return description; }
 

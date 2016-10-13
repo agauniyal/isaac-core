@@ -18,12 +18,12 @@ bool TripWire::intrusion()
 {
 	if (m_trip.try_lock()) {
 		int cycles = 0;
-		Device::on();
 		Device::off();
 		Device::setDirection(0);
 		while (read() == 0 && cycles < maxCycles) {
 			++cycles;
 		}
+		Device::on();
 		m_trip.unlock();
 		return (cycles == maxCycles) ? true : false;
 	}
