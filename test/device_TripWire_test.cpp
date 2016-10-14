@@ -1,6 +1,7 @@
 #include "deviceList.hpp"
 #include "device_TripWire.hpp"
 #include <gtest/gtest.h>
+#include <future>
 
 using namespace isaac;
 
@@ -21,7 +22,7 @@ TEST(TripWireDevice, Constructor)
 
 TEST(TripWireDevice, OnOff)
 {
-	TripWire t1(7, "abc", "12345678", 2.0);
+	TripWire t1(7, "abc", "12345678", 200);
 
 	t1.on();
 	ASSERT_EQ(true, t1.active());
@@ -47,6 +48,34 @@ TEST(TripWireDevice, getLastBreak)
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	TripWire t1(7, "TripWire1", "#2222112", 500);
 	ASSERT_LT(now.count(), t1.getLastBreak());
+}
+
+
+TEST(TripWireDevice, intrusion)
+{
+	TripWire t1(7, "abc", "12345678", 100);
+	t1.on();
+
+	bool result = t1.intrusion();
+	ASSERT_EQ(true, result);
+}
+
+
+TEST(TripWireDevice, intrusionMultiThread)
+{
+	TripWire t1(7, "abc", "12345678", 5000);
+	t1.on();
+	bool cR = true;
+
+	std::vector<std::future<bool>> futures;
+	for (int i = 0; i < 5; ++i) {
+		futures.push_back(std::async(std::launch::async, [&]() { return t1.intrusion(); }));
+	}
+	for (auto &result : futures) {
+		bool r = result.get();
+		cR = cR && r;
+	}
+	ASSERT_EQ(false, cR);
 }
 
 
