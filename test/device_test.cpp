@@ -23,7 +23,7 @@ using namespace isaac;
 TEST(StaticMethods, Device)
 {
 	Device::configure();
-	const unsigned pinNumber = 7;
+	const auto pinNumber = 7;
 	ASSERT_FALSE(Device::isOccupied(pinNumber));
 
 	{
@@ -42,8 +42,7 @@ TEST(Device, dumpInfo)
 	auto j_info = device_sub1.dumpInfo();
 
 	ASSERT_EQ("Blue light", j_info["name"]);
-	int pin = j_info["powerPin"];
-	ASSERT_EQ(11, pin);
+	ASSERT_EQ(11, (int) j_info.at("powerPin"));
 	ASSERT_EQ("#2222222", j_info["id"]);
 }
 
@@ -118,7 +117,9 @@ TEST(Device, Description)
 TEST(Device, Exception)
 {
 	ASSERT_THROW(Led l1(42, "a", "12345678"), std::invalid_argument);
-	std::string s(60, 'a');
+	ASSERT_THROW(Led l1(-42, "a", "12345678"), std::invalid_argument);
+	ASSERT_THROW(Led l1(0, "a", "12345678"), std::invalid_argument);
+	std::string s(160, 'a');
 	ASSERT_THROW(Led l1(7, s, "12345678"), std::invalid_argument);
 	ASSERT_THROW(Led l1(8, "a", "12345678"), std::runtime_error);
 }

@@ -1,16 +1,19 @@
 #include "device_Temperature.hpp"
+#include <cmath>
+#include <fstream>
 
 using namespace isaac;
+
 const std::string TempSensor::TEMPSEN_PATH = config::getTempSensor();
 
 
-TempSensor::TempSensor(const unsigned int _p, const std::string _n, const std::string _id,
-  const std::string folder, std::chrono::milliseconds::rep _d)
-    : Device(_p, _n, _id), folderName(folder), delayTime(_d)
+TempSensor::TempSensor(const int _p, const std::string _n, const std::string _id,
+  const std::string _f, std::chrono::milliseconds::rep _d)
+    : Device(_p, _n, _id), folderName(_f.substr(0, config::nameLength)), delayTime(std::abs(_d))
 {
 	std::string path;
 	path.reserve(40);
-	path.append(TEMPSEN_PATH).append("/").append(folder).append("/w1_slave");
+	path.append(TEMPSEN_PATH).append("/").append(folderName).append("/w1_slave");
 
 	std::ifstream readStream(path, std::ios::ate);
 	if (readStream) {

@@ -1,6 +1,6 @@
 #include "deviceList.hpp"
-#include "device_Led.hpp"
-#include <algorithm>
+#include "devices_all.hpp"
+
 #include <fstream>
 #include <random>
 #include <sstream>
@@ -12,7 +12,7 @@ const std::shared_ptr<spdlog::logger> deviceList::logger
   = spdlog::rotating_logger_mt("DL_Logger", config::getLogPath() + "deviceList", 1048576 * 5, 3);
 
 
-std::string deviceList::genId(const unsigned int _len)
+std::string deviceList::genId(const int _len)
 {
 	std::string result;
 	result.reserve(_len);
@@ -25,36 +25,52 @@ std::string deviceList::genId(const unsigned int _len)
 	static std::mt19937 gen(seed);
 	std::uniform_int_distribution<> dis(0, 61);
 
-	for (unsigned int i = 0; i < _len; i++) {
+	for (int i = 0; i < _len; i++) {
 		result += alphanum[dis(gen)];
 	}
 	return result;
 }
 
 
-bool deviceList::place(deviceType _Type, const json _j)
+std::pair<std::string, bool> deviceList::place(deviceType _Type, const json _j)
 {
 	std::string id;
-	id.reserve(8);
+	id.reserve(config::idLength);
 
 	do {
-		id = genId(8);
+		id = genId(config::idLength);
 	} while (list.count(id) != 0);
 
-	switch (_Type) {
+	bool result = false;
 
-		case deviceType::Led: {
-			try {
-				auto res = list.emplace(std::make_pair(id, std::make_unique<Led>(_j, id)));
-				logger->info("Device inserted\n{}", _j.dump(4));
-				return res.second;
-			} catch (const std::exception &e) {
-				logger->info(e.what());
-				return false;
-			}
+	try {
+		switch (_Type) {
+			case deviceType::Led:
+				result = list.emplace(id, std::make_unique<Led>(_j, id)).second;
+				break;
+
+			case deviceType::TempSensor:
+				result = list.emplace(id, std::make_unique<TempSensor>(_j, id)).second;
+				break;
+
+			case deviceType::Switch:
+				result = list.emplace(id, std::make_unique<Switch>(_j, id)).second;
+				break;
+
+			case deviceType::TripWire:
+				result = list.emplace(id, std::make_unique<TripWire>(_j, id)).second;
+				break;
+
+			case deviceType::Buzzer:
+				result = list.emplace(id, std::make_unique<Buzzer>(_j, id)).second;
+				break;
+
+			default: logger->info("Device type not recognized\n");
 		}
-		default: return false;
+	} catch (std::exception &e) {
+		logger->error("Cannot place device, exception thrown - {}", e.what());
 	}
+	return std::make_pair(id, result);
 }
 
 

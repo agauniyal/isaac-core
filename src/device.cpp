@@ -13,23 +13,23 @@ const std::shared_ptr<spdlog::logger> Device::logger
   = spdlog::rotating_logger_mt("D_Logger", config::getLogPath() + "device", 1048576 * 5, 3);
 
 
-Device::Device(const unsigned int _p, const std::string _n, const std::string _id) : powerPin(_p)
+Device::Device(const int _p, const std::string _n, const std::string _id) : powerPin(_p)
 {
-	if (powerPin > config::gpioNumPins) {
+	if (powerPin > config::gpioNumPins || powerPin < 1) {
 		logger->error("Pin <{}> is not valid", powerPin);
-		throw std::invalid_argument("pin number cannot exceed gpio::NumPins");
+		throw std::invalid_argument("Supplied argument is not a valid pin number");
 	}
 
-	if (_id.size() == 8) {
-		_id.copy(id, 8);
+	if (_id.size() == config::idLength) {
+		_id.copy(id, config::idLength);
 	} else {
-		throw std::invalid_argument("id length must be of 8 characters");
+		throw std::invalid_argument("Supplied argument for id is not valid");
 	}
 
-	if (_n.size() != 0 && _n.size() <= 50) {
+	if (_n.size() != 0 && _n.size() <= config::nameLength) {
 		name.assign(_n);
 	} else {
-		throw std::invalid_argument("name length must be in between 1 and 50 characters");
+		throw std::invalid_argument("Supplied argument for name is not valid");
 	}
 
 	// only 1 thread can enter following section at a time
@@ -196,7 +196,6 @@ json Device::dumpInfo() const
 	info["id"]          = id;
 	info["name"]        = name;
 	info["description"] = description;
-	info["type"]        = dToInt(deviceType::Base);
 	return info;
 }
 

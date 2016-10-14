@@ -1,6 +1,5 @@
 #include "deviceList.hpp"
 #include "device_Led.hpp"
-#include <fstream>
 #include <gtest/gtest.h>
 
 using namespace isaac;
@@ -39,15 +38,36 @@ TEST(LedDevice, getType)
 }
 
 
-TEST(LedDevice, getLastAccessed)
+TEST(LedDevice, dumpInfo)
 {
-	using namespace std::chrono;
+	Led l1(7, "MyLed", "12345678");
+	auto jsonInfo = l1.dumpInfo();
+	auto type     = dToInt(deviceType::Led);
 
-	Led l1(11, "greenLed", "#1234567");
-	auto epoch = l1.getLastAccessed();
 
-	std::this_thread::sleep_for(milliseconds(5));
+	ASSERT_EQ(7, (int) jsonInfo.at("powerPin"));
+	ASSERT_EQ("12345678", jsonInfo.at("id"));
+	ASSERT_EQ("MyLed", jsonInfo.at("name"));
+	ASSERT_EQ(type, (int) jsonInfo.at("type"));
+}
 
-	auto epochNow = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-	ASSERT_GT(epochNow, epoch);
+
+TEST(LedDevice, place)
+{
+	deviceList list;
+	deviceType type = deviceType::Led;
+
+	json j1 = json::object();
+
+	j1["powerPin"] = nullptr;
+	ASSERT_FALSE(list.place(type, j1).second);
+
+	j1["name"]        = "abc";
+	j1["powerPin"]    = 7;
+	j1["description"] = "A new Led device";
+	ASSERT_EQ(true, list.place(type, j1).second);
+	ASSERT_EQ(1, list.size());
+
+	json j2 = json::object();
+	ASSERT_FALSE(list.place(type, j2).second);
 }

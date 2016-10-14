@@ -18,7 +18,7 @@ class deviceList final {
 	umap list;
 	std::mutex m_list;
 
-	static std::string genId(const unsigned int = 8);
+	static std::string genId(const int = 8);
 
 	static const std::shared_ptr<spdlog::logger> logger;
 
@@ -31,7 +31,7 @@ public:
 	deviceList() {}
 	arrIdName getAll() const;
 
-	bool place(deviceType, const json = json::object());
+	std::pair<std::string, bool> place(deviceType, const json = json::object());
 	bool removeId(const std::string);
 	void sync(const bool = 1, const std::string = JSONDB_PATH + "db.json");
 
@@ -43,7 +43,7 @@ public:
 	auto rehash(const size_t n) { return list.rehash(n); }
 	auto reserve(const size_t n) { return list.reserve(n); }
 
-	bool mt_place(deviceType _Type, const json _j)
+	std::pair<std::string, bool> mt_place(deviceType _Type, const json _j)
 	{
 		std::lock_guard<std::mutex> lock(m_list);
 		return place(_Type, _j);

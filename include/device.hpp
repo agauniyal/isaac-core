@@ -3,7 +3,6 @@
 
 #include "config.hpp"
 #include "deviceType.hpp"
-#include <atomic>
 #include <json.hpp>
 #include <memory>
 #include <mutex>
@@ -15,8 +14,8 @@ using json = nlohmann::json;
 
 class Device {
 
-	unsigned int powerPin;
-	char id[9] = {};
+	int powerPin;
+	char id[config::idLength + 1] = {};
 
 	static const std::string GPIO_PATH;
 
@@ -43,14 +42,14 @@ protected:
 	// 0 => 'in' | 1 => 'out'
 	void setDirection(bool);
 	bool getDirection() const;
-	unsigned int getPowerPin() const { return powerPin; }
+	int getPowerPin() const { return powerPin; }
 
-	// pinNumber and deviceName
-	Device(const unsigned int, const std::string = "", const std::string = "");
+	// pinNumber and deviceName and id
+	Device(const int, const std::string = "", const std::string = "");
 
 public:
 	std::string getId() const { return id; }
-	std::string getName() const { return name; }
+	std::string getName() { return name; }
 	json getDescription() const { return description; }
 
 	bool setName(const std::string = "DEFAULT DEVICE NAME");
@@ -65,9 +64,9 @@ public:
 
 	virtual bool read();
 
-	static bool isOccupied(const unsigned int _p)
+	static bool isOccupied(const int _p)
 	{
-		return (_p > config::gpioNumPins) ? false : occupied[_p];
+		return (_p > config::gpioNumPins || _p < 1) ? false : occupied[_p];
 	}
 	static void configure() { logger->set_pattern(" %c - [%l][%t] \"%v\" "); }
 

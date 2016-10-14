@@ -6,11 +6,15 @@
 namespace isaac {
 
 namespace config {
-	constexpr unsigned int gpioNumPins = 41;
-	std::string getGPIOBasePath(const std::string = "config.json");
-	std::string getJsonDBPath(const std::string = "config.json");
-	std::string getLogPath(const std::string = "config.json");
-	std::string getTempSensor(const std::string = "config.json");
+
+	constexpr int gpioNumPins = 41;
+	constexpr int idLength    = 8;
+	constexpr int nameLength  = 100;
+
+	std::string getGPIOBasePath();
+	std::string getJsonDBPath();
+	std::string getLogPath();
+	std::string getTempSensor();
 }
 }
 
