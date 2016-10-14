@@ -20,13 +20,13 @@ AlwaysBreakTemplateDeclarations: false
 BinPackArguments: true
 BinPackParameters: true
 BreakBeforeBinaryOperators: All
-BreakBeforeBraces: Stroustrup
+BreakBeforeBraces: WebKit
 BreakBeforeTernaryOperators: true
-BreakConstructorInitializersBeforeComma: true
+BreakConstructorInitializersBeforeComma: false
 ColumnLimit:     100
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 4
-ContinuationIndentWidth: 4
+ContinuationIndentWidth: 2
 Cpp11BracedListStyle: false
 DerivePointerAlignment: false
 DisableFormat:   false
@@ -55,4 +55,3 @@ Standard:        Cpp11
 TabWidth:        4
 UseTab:          ForIndentation
 ...
-

@@ -1,9 +1,19 @@
 project('isaac-core', 'cpp', version : '0.1.0',
-		default_options : ['cpp_std=c++11'])
+		default_options : ['cpp_std=c++14'])
 
 inc = include_directories('include')
 
 thread_dep = dependency('threads')
+
+uWS_sp = subproject('uWS')
+uWS_dep = uWS_sp.get_variable('uWS_dep')
+
+json_sp = subproject('json')
+json_dep = json_sp.get_variable('json_dep')
+
+spdlog_sp = subproject('spdlog')
+spdlog_dep = spdlog_sp.get_variable('spdlog_dep')
+
 gtest = dependency('gtest', main : true, required : false)
 
 if not gtest.found()
@@ -18,6 +28,14 @@ if not gtest.found()
                                link_with : gtest_lib)
 endif
 
-subdir('src')
-subdir('test')
 
+subdir('src')
+subdir('app')
+subdir('test')
+subdir('benchmark')
+
+emulate_rasp = find_program('scripts/emulate_rasp.sh')
+run_target('emulate', command : emulate_rasp.path())
+
+fix_gpio_permissions = find_program('scripts/fix_gpio_permissions.sh')
+run_target('fixGpioPermissions', command : fix_gpio_permissions.path())

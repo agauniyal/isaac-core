@@ -1,0 +1,47 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "isaac-app",
+			"type": "cppdbg",
+			"request": "launch",
+			"targetArchitecture": "x64",
+			"program": "${workspaceRoot}/build/app/isaac-app",
+			"args": [],
+			"stopAtEntry": true,
+			"cwd": "${workspaceRoot}/build/app",
+			"environment": [],
+			"externalConsole": false,
+			"linux": {
+				"MIMode": "gdb"
+			},
+			"osx": {
+				"MIMode": "lldb"
+			},
+			"windows": {
+				"MIMode": "gdb"
+			}
+		},
+		{
+			"name": "isaac-test",
+			"type": "cppdbg",
+			"request": "launch",
+			"targetArchitecture": "x64",
+			"program": "${workspaceRoot}/build/test/testexe",
+			"args": [],
+			"stopAtEntry": true,
+			"cwd": "${workspaceRoot}/build/test",
+			"environment": [],
+			"externalConsole": false,
+			"linux": {
+				"MIMode": "gdb"
+			},
+			"osx": {
+				"MIMode": "lldb"
+			},
+			"windows": {
+				"MIMode": "gdb"
+			}
+		}
+	]
+}

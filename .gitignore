@@ -27,3 +27,15 @@
 *.exe
 *.out
 *.app
+
+# Folders
+.vscode/*
+build
+debug/raspi
+subprojects/*
+
+# Not Ignored
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/c_cpp_properties.json
+!subprojects/*.wrap
