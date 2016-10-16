@@ -65,6 +65,10 @@ std::pair<std::string, bool> deviceList::place(deviceType _Type, const json _j)
 				result = list.emplace(id, std::make_unique<Buzzer>(_j, id)).second;
 				break;
 
+			case deviceType::FlameSensor:
+				result = list.emplace(id, std::make_unique<Buzzer>(_j, id)).second;
+				break;
+
 			default: logger->info("Device type not recognized\n");
 		}
 	} catch (std::exception &e) {
