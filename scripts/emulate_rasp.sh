@@ -18,10 +18,10 @@ EORULE
 
 emulateGpio(){
 	mkdir -p app/debug/raspi/path/gpio$1
-	touch app/debug/raspi/path/gpio$1/direction
-	touch app/debug/raspi/path/gpio$1/value
-	touch app/debug/raspi/path/export
-	touch app/debug/raspi/path/unexport
+	echo "out" > app/debug/raspi/path/gpio$1/direction
+	echo 1 > app/debug/raspi/path/gpio$1/value
+	echo 1 > app/debug/raspi/path/export
+	echo 0 > app/debug/raspi/path/unexport
 
 	mkdir -p app/debug/raspi/path/tempSensor
 	touch app/debug/raspi/path/tempSensor/w1_slave
@@ -35,10 +35,10 @@ emulateGpio(){
 
 
 	mkdir -p test/debug/raspi/path/gpio$1
-	touch test/debug/raspi/path/gpio$1/direction
-	touch test/debug/raspi/path/gpio$1/value
-	touch test/debug/raspi/path/export
-	touch test/debug/raspi/path/unexport
+	echo "out" > test/debug/raspi/path/gpio$1/direction
+	echo 1 > test/debug/raspi/path/gpio$1/value
+	echo 1 > test/debug/raspi/path/export
+	echo 0 > test/debug/raspi/path/unexport
 
 	mkdir -p test/debug/raspi/path/tempSensor
 	touch test/debug/raspi/path/tempSensor/w1_slave
@@ -52,10 +52,10 @@ emulateGpio(){
 
 
 	mkdir -p debug/raspi/path/gpio$1
-	touch debug/raspi/path/gpio$1/direction
-	touch debug/raspi/path/gpio$1/value
-	touch debug/raspi/path/export
-	touch debug/raspi/path/unexport
+	echo "out" > debug/raspi/path/gpio$1/direction
+	echo 1 > debug/raspi/path/gpio$1/value
+	echo 1 > debug/raspi/path/export
+	echo 0 > debug/raspi/path/unexport
 
 	mkdir -p debug/raspi/path/tempSensor
 	touch debug/raspi/path/tempSensor/w1_slave

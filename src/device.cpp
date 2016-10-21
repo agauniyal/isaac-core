@@ -15,42 +15,53 @@ const std::shared_ptr<spdlog::logger> Device::logger
 
 Device::Device(const int _p, const std::string _n, const std::string _id) : powerPin(_p)
 {
-	if (powerPin > config::gpioNumPins || powerPin < 1) {
-		logger->error("Pin <{}> is not valid", powerPin);
-		throw std::invalid_argument("Supplied argument is not a valid pin number");
-	}
-
-	if (_id.size() == config::idLength) {
-		_id.copy(id, config::idLength);
-	} else {
-		throw std::invalid_argument("Supplied argument for id is not valid");
-	}
-
-	if (_n.size() != 0 && _n.size() <= config::nameLength) {
-		name.assign(_n);
-	} else {
-		throw std::invalid_argument("Supplied argument for name is not valid");
-	}
-
-	// only 1 thread can enter following section at a time
-	{
-		std::lock_guard<std::mutex> lock(m_occupied);
-		if (!occupied[powerPin]) {
-			occupied[powerPin] = true;
-		} else {
-			logger->info(
-			  "Device <{}> - pin <{}> cannot be created, pin already occupied", name, powerPin);
-			throw std::runtime_error("pin already occupied");
-		}
-	}
-
+	bool op = occupyPin(powerPin);
 	try {
+		if (!op) {
+			throw std::invalid_argument("Pin already occupied or invalid");
+		}
+
+		if (_id.size() == config::idLength) {
+			_id.copy(id, config::idLength);
+		} else {
+			throw std::invalid_argument("Supplied argument for id is not valid");
+		}
+
+		if (_n.size() != 0 && _n.size() <= config::nameLength) {
+			name.assign(_n);
+		} else {
+			throw std::invalid_argument("Supplied argument for name is not valid");
+		}
+
 		mount();
 		off();
 		logger->info("Device <{}> with pin <{}> mounted", name, powerPin);
-	} catch (std::runtime_error &e) {
+
+	} catch (std::invalid_argument &e) {
+		if (op) {
+			occupied[powerPin] = false;
+		}
+		logger->error("Device <{}> - pin <{}> could not be created\n{}", name, powerPin, e.what());
+		throw std::invalid_argument("Error: Device cannot be created");
+	} catch (std::exception &e) {
 		logger->error("Device <{}> - pin <{}> could not be created\n{}", name, powerPin, e.what());
 		throw std::runtime_error("Error: Device cannot be created");
+	}
+}
+
+
+bool Device::occupyPin(const int _p, const bool _b)
+{
+	std::lock_guard<std::mutex> lock(m_occupied);
+	if (_p < config::gpioNumPins && _p > 0) {
+		if (_b && !occupied[_p]) {
+			occupied[_p] = true;
+		} else if (!_b && occupied[_p]) {
+			occupied[_p] = false;
+		}
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -208,11 +219,6 @@ Device::~Device()
 		logger->error("{}", e.what());
 	}
 
-	std::lock_guard<std::mutex> lock(m_occupied);
-	if (occupied[powerPin]) {
-		occupied[powerPin] = false;
-		logger->info("Device <{}> - <{}> removed", name, powerPin);
-	} else {
-		logger->critical("Pin number <{}> wasn't occupied by device <{}>", powerPin, name);
-	}
+	occupyPin(powerPin, false);
+	logger->info("Device <{}> - <{}> removed", name, powerPin);
 }

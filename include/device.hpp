@@ -17,8 +17,6 @@ class Device {
 	int powerPin;
 	char id[config::idLength + 1] = {};
 
-	static const std::string GPIO_PATH;
-
 	// make sure to guard against n > config::gpioNumPins
 	static bool occupied[config::gpioNumPins];
 	std::mutex m_occupied;
@@ -37,12 +35,14 @@ class Device {
 	Device &operator=(const Device &) = delete;
 
 protected:
+	static const std::string GPIO_PATH;
 	static const std::shared_ptr<spdlog::logger> logger;
 
 	// 0 => 'in' | 1 => 'out'
 	void setDirection(bool);
 	bool getDirection() const;
 	int getPowerPin() const { return powerPin; }
+	bool occupyPin(const int, const bool = true);
 
 	// pinNumber and deviceName and id
 	Device(const int, const std::string = "", const std::string = "");
