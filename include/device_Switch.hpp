@@ -27,7 +27,6 @@ public:
 
 	void on() override;
 	void off() override;
-	auto isOn() { return read(); }
 
 	seconds::rep getRunTime() const { return runTime.count(); }
 	void resetRunTime() { runTime = 0s; }

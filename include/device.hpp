@@ -6,6 +6,9 @@
 #include <json.hpp>
 #include <memory>
 #include <mutex>
+#include <utility>
+#include <unordered_map>
+#include <functional>
 #include <spdlog/spdlog.h>
 
 namespace isaac {
@@ -38,6 +41,8 @@ protected:
 	static const std::string GPIO_PATH;
 	static const std::shared_ptr<spdlog::logger> logger;
 
+	std::unordered_map<std::string, std::pair<std::string, std::string>> events;
+
 	// 0 => 'in' | 1 => 'out'
 	void setDirection(bool);
 	bool getDirection() const;
@@ -48,6 +53,8 @@ protected:
 	Device(const int, const std::string = "", const std::string = "");
 
 public:
+	std::unordered_map<std::string, std::function<void()>> methods;
+
 	std::string getId() const { return id; }
 	std::string getName() { return name; }
 	json getDescription() const { return description; }
@@ -61,14 +68,15 @@ public:
 	// both on() and off() calls are not thread safe
 	virtual void on();
 	virtual void off();
+	virtual void detect() {}
 
 	virtual bool read();
+	auto isOn() { return read(); }
 
 	static bool isOccupied(const int _p)
 	{
 		return (_p > config::gpioNumPins || _p < 1) ? false : occupied[_p];
 	}
-	static void configure() { logger->set_pattern(" %c - [%l][%t] \"%v\" "); }
 
 	virtual ~Device();
 };
