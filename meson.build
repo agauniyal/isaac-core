@@ -14,6 +14,8 @@ json_dep = json_sp.get_variable('json_dep')
 spdlog_sp = subproject('spdlog')
 spdlog_dep = spdlog_sp.get_variable('spdlog_dep')
 
+uv_dep = dependency('libuv', version : '>=1.0')
+
 gtest = dependency('gtest', main : true, required : false)
 
 if not gtest.found()

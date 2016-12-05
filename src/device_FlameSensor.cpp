@@ -1,11 +1,16 @@
-#include "device_FlameSensor.hpp"
 #include <fstream>
+#include "uv.h"
+#include "device_FlameSensor.hpp"
+#include "deviceList.hpp"
+
 
 using namespace isaac;
 
 
 FlameSensor::FlameSensor(const int _p, const std::string _n, const std::string _id, const int _d)
-    : Device(_p, _n, _id), dataPin(_d), lastDetected(time_point_cast<milliseconds>(system_clock::now()))
+    : Device(_p, _n, _id),
+      dataPin(_d),
+      lastDetected(time_point_cast<milliseconds>(system_clock::now()))
 {
 	if (!occupyPin(dataPin)) {
 		logger->error("FlameSensor <{}> - Datapin <{}> could not be created\n", _n, _d);
@@ -39,11 +44,17 @@ FlameSensor::FlameSensor(const int _p, const std::string _n, const std::string _
 	readPath.reserve(40);
 	readPath.append(GPIO_PATH).append("gpio").append(std::to_string(dataPin)).append("/value");
 
+	state = false;
+
+	uv_timer_init(deviceList::getLoop(), &t1_handle);
+	uv_timer_start(&t1_handle, &cb, 0, 1000);
+	t1_handle.data = this;
+
 	logger->info("FlameSensor <{}> - dataPin <{}> constructed", getName(), dataPin);
 }
 
 
-bool FlameSensor::detect()
+void FlameSensor::detect()
 {
 	bool result = false;
 	if (m_detect.try_lock()) {
@@ -53,9 +64,9 @@ bool FlameSensor::detect()
 		}
 	}
 	if (result) {
+		state        = true;
 		lastDetected = time_point_cast<milliseconds>(system_clock::now());
 	}
-	return result;
 }
 
 

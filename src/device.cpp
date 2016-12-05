@@ -47,6 +47,12 @@ Device::Device(const int _p, const std::string _n, const std::string _id) : powe
 		logger->error("Device <{}> - pin <{}> could not be created\n{}", name, powerPin, e.what());
 		throw std::runtime_error("Error: Device cannot be created");
 	}
+
+	methods["on"]     = [&]() { on(); };
+	methods["off"]    = [&]() { off(); };
+	methods["detect"] = [&]() { detect(); };
+
+	logger->set_pattern(" %c - [%l][%t] \"%v\" ");
 }
 
 

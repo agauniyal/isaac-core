@@ -7,6 +7,9 @@
 
 using namespace isaac;
 
+uv_loop_t deviceList::loop;
+std::atomic<bool> deviceList::running;
+
 const std::string deviceList::JSONDB_PATH = config::getJsonDBPath();
 const std::shared_ptr<spdlog::logger> deviceList::logger
   = spdlog::rotating_logger_mt("DL_Logger", config::getLogPath() + "deviceList", 1048576 * 5, 3);
@@ -66,7 +69,7 @@ std::pair<std::string, bool> deviceList::place(deviceType _Type, const json _j)
 				break;
 
 			case deviceType::FlameSensor:
-				result = list.emplace(id, std::make_unique<Buzzer>(_j, id)).second;
+				result = list.emplace(id, std::make_unique<FlameSensor>(_j, id)).second;
 				break;
 
 			default: logger->info("Device type not recognized\n");

@@ -1,4 +1,5 @@
 #include "device_TripWire.hpp"
+#include "deviceList.hpp"
 
 using namespace isaac;
 
@@ -10,11 +11,18 @@ TripWire::TripWire(const int _p, const std::string _n, const std::string _id, co
 		logger->error("TripWire <{}> maxCycles must be +ve integer", getName());
 		throw std::invalid_argument("Supplied argument for maxCycles isn't valid");
 	}
+
+	state = false;
+
+	uv_timer_init(deviceList::getLoop(), &t1_handle);
+	uv_timer_start(&t1_handle, &cb, 0, 1000);
+	t1_handle.data = this;
+
 	logger->info("TripWire <{}> - pin <{}> constructed", getName(), getPowerPin());
 }
 
 
-bool TripWire::intrusion()
+void TripWire::detect()
 {
 	if (m_trip.try_lock()) {
 		int cycles = 0;
@@ -25,9 +33,8 @@ bool TripWire::intrusion()
 		}
 		Device::on();
 		m_trip.unlock();
-		return (cycles == maxCycles) ? true : false;
+		state = (cycles == maxCycles) ? true : false;
 	}
-	return false;
 }
 
 

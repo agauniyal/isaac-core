@@ -22,7 +22,6 @@ using namespace isaac;
 
 TEST(StaticMethods, Device)
 {
-	Device::configure();
 	const auto pinNumber = 7;
 	ASSERT_FALSE(Device::isOccupied(pinNumber));
 
