@@ -21,7 +21,6 @@ public:
 
 	void on() override;
 	void off() override;
-	auto isOn() { return read(); }
 	deviceType getType() const override { return deviceType::Led; }
 	json dumpInfo() const override;
 };

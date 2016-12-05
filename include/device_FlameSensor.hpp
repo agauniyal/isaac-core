@@ -1,8 +1,10 @@
 #ifndef DEVICE_FLAMESENSOR_HPP
 #define DEVICE_FLAMESENSOR_HPP
 
-#include "device.hpp"
 #include <chrono>
+#include <atomic>
+#include "device.hpp"
+
 namespace isaac {
 
 using namespace std::chrono;
@@ -11,12 +13,24 @@ class FlameSensor final : public Device {
 
 private:
 	int dataPin;
+	std::atomic<bool> state;
 	std::string readPath;
+
+	uv_timer_t t1_handle;
+
 	std::mutex m_dir;
 	std::mutex m_occupied;
 	std::mutex m_detect;
 	std::mutex m_lastDetected;
+
 	time_point<system_clock> lastDetected;
+
+
+	static void cb(uv_timer_t *t)
+	{
+		FlameSensor *fL = static_cast<FlameSensor *>(t->data);
+		fL->detect();
+	}
 
 	FlameSensor(const FlameSensor &) = delete;
 	FlameSensor &operator=(const FlameSensor &) = delete;
@@ -29,8 +43,9 @@ public:
 	{
 	}
 
-	bool detect();
-	auto active() { return read(); }
+	bool getState() const { return state; }
+	void detect() override;
+	void reset() { state = false; }
 
 	auto getLastDetected() const
 	{
